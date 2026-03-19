@@ -48,13 +48,35 @@ class _TasksPageState extends State<TasksPage> {
     setState(() {
       if (task.status == 'pending') {
         // Move to completed
-        task.status = 'completed';
-        completedJobs.insert(0, task);
+        final updatedTask = Order(
+          id: task.id,
+          title: task.title,
+          location: task.location,
+          dateTime: task.dateTime,
+          price: task.price,
+          status: 'completed',
+          isUrgent: task.isUrgent,
+          progressPhotos: task.progressPhotos,
+          clientId: task.clientId,
+          helperId: task.helperId,
+        );
+        completedJobs.insert(0, updatedTask);
         pendingJobs.remove(task);
       } else {
         // Move to pending
-        task.status = 'pending';
-        pendingJobs.add(task);
+        final updatedTask = Order(
+          id: task.id,
+          title: task.title,
+          location: task.location,
+          dateTime: task.dateTime,
+          price: task.price,
+          status: 'pending',
+          isUrgent: task.isUrgent,
+          progressPhotos: task.progressPhotos,
+          clientId: task.clientId,
+          helperId: task.helperId,
+        );
+        pendingJobs.add(updatedTask);
         completedJobs.remove(task);
       }
     });

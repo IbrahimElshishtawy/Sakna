@@ -116,6 +116,49 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 28),
 
+              /// عرض موسمي (Seasonal Offer)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFE91E63), Color(0xFFFFC107)],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.celebration, color: Colors.white, size: 40),
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'عروض رمضان المبارك 🌙',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'خصم 20% على خدمات التنظيف العميق',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              const Text(
+                'خدماتنا الأساسية',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+
               /// كارت: خدمات داخلية
               _CategoryCard(
                 title: 'خدمات داخلية',
@@ -142,6 +185,56 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => _openCreateTask('أخرى'),
               ),
 
+              const SizedBox(height: 32),
+
+              /// مقدمو خدمة مميزون
+              const Text(
+                'مقدمو خدمة مميزون (Pro) 🌟',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      width: 100,
+                      margin: const EdgeInsets.only(left: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.amber, width: 2),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircleAvatar(
+                            radius: 24,
+                            child: Icon(Icons.person),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'أحمد فوزي',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.star, size: 12, color: Colors.amber),
+                              Text(' 4.9', style: TextStyle(fontSize: 10)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
               const SizedBox(height: 24),
             ],
           ),

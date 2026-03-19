@@ -20,26 +20,59 @@ class MissionInProgressScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  children: const [
-                    Align(
+                  children: [
+                    const Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        'حالة المهمة',
+                        'تتبع حالة المهمة',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      'مساعدك في الطريق إلى موقعك، وقت الوصول المتوقع 5 دقائق.',
-                      style: TextStyle(color: Colors.grey),
-                      textAlign: TextAlign.right,
+                    const SizedBox(height: 16),
+                    // Stepper status
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildStep(Icons.check_circle, 'تم الطلب', true),
+                        _buildDivider(true),
+                        _buildStep(Icons.person_pin, 'في الطريق', true),
+                        _buildDivider(false),
+                        _buildStep(Icons.home_repair_service, 'قيد التنفيذ', false),
+                        _buildDivider(false),
+                        _buildStep(Icons.star, 'مكتمل', false),
+                      ],
                     ),
                   ],
                 ),
               ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'صور التنفيذ (مباشر)',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 100,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _buildPhotoPlaceholder(),
+                      _buildPhotoPlaceholder(),
+                      _buildPhotoPlaceholder(isAdd: true),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
@@ -48,13 +81,20 @@ class MissionInProgressScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 margin: const EdgeInsets.symmetric(horizontal: 16),
-                height: 260,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.black12,
+                  image: const DecorationImage(
+                    image: NetworkImage('https://via.placeholder.com/400x200?text=Live+Map+Tracking'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 alignment: Alignment.center,
-                child: const Text('مساحة للصورة / الخريطة'),
+                child: Container(
+                   padding: const EdgeInsets.all(8),
+                   color: Colors.white70,
+                   child: const Text('تتبع حي للمساعد على الخريطة'),
+                ),
               ),
             ),
           ),
@@ -71,6 +111,47 @@ class MissionInProgressScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStep(IconData icon, String label, bool isDone) {
+    return Column(
+      children: [
+        Icon(icon, color: isDone ? Colors.green : Colors.grey, size: 28),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            color: isDone ? Colors.black : Colors.grey,
+            fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDivider(bool isDone) {
+    return Container(
+      width: 30,
+      height: 2,
+      color: isDone ? Colors.green : Colors.grey.shade300,
+    );
+  }
+
+  Widget _buildPhotoPlaceholder({bool isAdd = false}) {
+    return Container(
+      width: 100,
+      margin: const EdgeInsets.only(left: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Icon(
+        isAdd ? Icons.add_a_photo : Icons.image,
+        color: Colors.grey,
       ),
     );
   }

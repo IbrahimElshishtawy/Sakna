@@ -1,7 +1,11 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:khidma/core/app_routes.dart';
+import 'package:khidma/core/bloc/user_bloc/user_bloc.dart';
+import 'package:khidma/core/bloc/user_bloc/user_event.dart';
+import 'package:khidma/core/bloc/user_bloc/user_state.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -34,6 +38,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () {
                 Navigator.pushNamed(context, AppRoutes.languageSettings);
+              },
+            ),
+
+            // المظهر (Dark/Light)
+            BlocBuilder<UserBloc, UserState>(
+              builder: (context, state) {
+                bool isDark = false;
+                if (state is UserProfileLoaded) {
+                  isDark = state.isDarkMode;
+                }
+                return SwitchListTile(
+                  title: const Text('الوضع الليلي'),
+                  secondary: Icon(isDark ? Icons.dark_mode : Icons.light_mode),
+                  value: isDark,
+                  onChanged: (val) {
+                    context.read<UserBloc>().add(ToggleThemeEvent());
+                  },
+                );
               },
             ),
 

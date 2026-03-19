@@ -23,6 +23,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _hoursController = TextEditingController();
 
+  bool _isUrgent = false;
+  DateTime? _scheduledDate;
+
   String? _selectedService;
   final List<String> _serviceOptions = const [
     'تنظيف',
@@ -92,6 +95,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
       hourlyPrice: double.tryParse(_hourlyPriceController.text.trim()) ?? 0,
       location: _locationController.text.trim(),
       hours: hours,
+      isUrgent: _isUrgent,
+      scheduledAt: _scheduledDate,
     );
 
     Navigator.of(context).push(
@@ -266,6 +271,66 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                           onSelect: _onSelectPrice,
                         ),
                       ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    /// خدمة عاجلة
+                    SwitchListTile(
+                      title: const Text(
+                        'خدمة عاجلة (خلال ساعة)',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: const Text(
+                        'سيتم إضافة 50% على السعر الأساسي',
+                        textAlign: TextAlign.right,
+                      ),
+                      secondary: const Icon(Icons.bolt, color: Colors.amber),
+                      value: _isUrgent,
+                      onChanged: (val) {
+                        setState(() {
+                          _isUrgent = val;
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    /// جدولة الخدمة
+                    ListTile(
+                      title: Text(
+                        _scheduledDate == null
+                            ? 'جدولة الخدمة (اختياري)'
+                            : 'موعد الخدمة: ${_scheduledDate.toString().substring(0, 16)}',
+                        textAlign: TextAlign.right,
+                      ),
+                      trailing: const Icon(Icons.calendar_month),
+                      onTap: () async {
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(const Duration(days: 30)),
+                        );
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (time != null) {
+                            setState(() {
+                              _scheduledDate = DateTime(
+                                date.year,
+                                date.month,
+                                date.day,
+                                time.hour,
+                                time.minute,
+                              );
+                            });
+                          }
+                        }
+                      },
                     ),
 
                     const SizedBox(height: 20),

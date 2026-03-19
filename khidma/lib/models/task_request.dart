@@ -5,6 +5,8 @@ class TaskRequest {
   final double hourlyPrice;
   final String location;
   final int hours; // عدد الساعات
+  final bool isUrgent;
+  final DateTime? scheduledAt;
 
   TaskRequest({
     required this.category,
@@ -13,5 +15,7 @@ class TaskRequest {
     required this.hourlyPrice,
     required this.location,
     required this.hours,
+    this.isUrgent = false,
+    this.scheduledAt,
   });
 }
