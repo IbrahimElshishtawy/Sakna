@@ -28,4 +28,22 @@ class KhidmaUser {
     this.status = 'offline',
     this.availability = 'available',
   });
+
+  factory KhidmaUser.fromMap(Map<String, dynamic> map) {
+    return KhidmaUser(
+      id: map['_id'] ?? '',
+      name: map['name'] ?? '',
+      role: map['role'] ?? 'client',
+      city: map['city'] ?? '',
+      rating: (map['rating'] as num?)?.toDouble() ?? 5.0,
+      avatarUrl: map['avatarUrl'] ?? '',
+      latitude: map['location']?['coordinates']?[1]?.toDouble(),
+      longitude: map['location']?['coordinates']?[0]?.toDouble(),
+      subscriptionType: map['subscriptionType'] ?? 'basic',
+      walletBalance: (map['walletBalance'] as num?)?.toDouble() ?? 0.0,
+      badges: List<String>.from(map['badges'] ?? []),
+      status: map['status'] ?? 'offline',
+      availability: map['availability'] ?? 'available',
+    );
+  }
 }

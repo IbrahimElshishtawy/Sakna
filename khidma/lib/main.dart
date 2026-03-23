@@ -48,8 +48,8 @@ class KhidmaApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      initialRoute: AppRoutes.onboarding,
-      scrollBehavior: const _AppScrollBehavior(),
+          initialRoute: AppRoutes.onboarding,
+          scrollBehavior: const _AppScrollBehavior(),
           onGenerateRoute: AppRoutes.generateRoute,
         );
       },
