@@ -1,6 +1,7 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// Animated text field with floating label and focus effects.
+/// Animated text field with floating label, glassmorphic style, and shake validation.
 class AnimatedTextField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
@@ -68,8 +69,9 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
     return AnimatedBuilder(
       animation: _shakeAnimation,
       builder: (context, child) {
-        final shakeOffset =
-            _shakeController.isAnimating ? sin(_shakeAnimation.value * 3 * 3.14159) * 8 : 0.0;
+        final shakeOffset = _shakeController.isAnimating
+            ? math.sin(_shakeAnimation.value * 3 * math.pi) * 8
+            : 0.0;
         return Transform.translate(
           offset: Offset(shakeOffset, 0),
           child: child,
@@ -188,13 +190,4 @@ class _AnimatedTextFieldState extends State<AnimatedTextField>
       ),
     );
   }
-}
-
-double sin(double x) => _sin(x);
-double _sin(double x) {
-  // Use dart:math sin
-  return x.isNaN ? 0 : _dartSin(x);
-}
-double _dartSin(double x) {
-  return x - (x * x * x / 6) + (x * x * x * x * x / 120); // Taylor approx not needed, use import
 }
