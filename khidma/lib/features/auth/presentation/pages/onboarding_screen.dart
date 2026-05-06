@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../core/app_routes.dart';
-import 'widgets/onboarding_3d_view.dart';
-import 'widgets/onboarding_page_data.dart';
-import 'widgets/dot_indicator.dart';
+import '../../../../core/app_routes.dart';
+import '../widgets/onboarding_3d_view.dart';
+import '../widgets/onboarding_page_data.dart';
+import '../widgets/dot_indicator.dart';
 
 /// Premium 3-page onboarding screen with 3D-like animations,
 /// floating icons, and smooth page transitions.
