@@ -331,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          // TODO: Navigate to sign up
+                                          Navigator.pushNamed(context, AppRoutes.register);
                                         },
                                         child: const Text(
                                           'إنشاء حساب',
