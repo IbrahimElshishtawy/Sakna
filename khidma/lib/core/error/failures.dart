@@ -1,0 +1,24 @@
+abstract class Failure extends Equatable {
+  final String message;
+
+  const Failure(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class ServerFailure extends Failure {
+  const ServerFailure([super.message = 'A server error occurred']);
+}
+
+class CacheFailure extends Failure {
+  const CacheFailure([super.message = 'A cache error occurred']);
+}
+
+class OfflineFailure extends Failure {
+  const OfflineFailure([super.message = 'No internet connection']);
+}
+
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure([super.message = 'Unauthorized access']);
+}
