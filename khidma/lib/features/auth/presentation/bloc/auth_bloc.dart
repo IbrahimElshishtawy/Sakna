@@ -1,9 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../domain/repositories/auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(const AuthInitial()) {
+  final AuthRepository authRepository;
+  final SharedPreferences sharedPreferences;
+
+  AuthBloc({
+    required this.authRepository,
+    required this.sharedPreferences,
+  }) : super(const AuthInitial()) {
     on<AuthLoginRequested>(_onLoginRequested);
     on<AuthGoogleLoginRequested>(_onGoogleLoginRequested);
     on<AuthAppleLoginRequested>(_onAppleLoginRequested);
@@ -16,34 +24,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    try {
-      // TODO: Replace with actual repository call
-      await Future.delayed(const Duration(seconds: 2));
 
-      // Simulate validation
-      if (event.email.isEmpty || event.password.isEmpty) {
-        emit(const AuthFailure(message: 'البريد الإلكتروني وكلمة المرور مطلوبان'));
-        return;
-      }
-
-      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(event.email)) {
-        emit(const AuthFailure(message: 'صيغة البريد الإلكتروني غير صحيحة'));
-        return;
-      }
-
-      if (event.password.length < 6) {
-        emit(const AuthFailure(message: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'));
-        return;
-      }
-
-      // Simulate success
-      emit(const AuthSuccess(
-        userId: 'user_123',
-        displayName: 'مستخدم خدمة',
-      ));
-    } catch (e) {
-      emit(AuthFailure(message: e.toString()));
+    if (event.email.isEmpty || event.password.isEmpty) {
+      emit(const AuthFailure(message: 'البريد الإلكتروني وكلمة المرور مطلوبان'));
+      return;
     }
+
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(event.email)) {
+      emit(const AuthFailure(message: 'صيغة البريد الإلكتروني غير صحيحة'));
+      return;
+    }
+
+    final result = await authRepository.loginWithEmailAndPassword(
+      email: event.email,
+      password: event.password,
+    );
+
+    result.fold(
+      (failure) => emit(AuthFailure(message: failure.message)),
+      (user) => emit(AuthSuccess(
+        userId: user.id,
+        displayName: user.name,
+      )),
+    );
   }
 
   Future<void> _onGoogleLoginRequested(
@@ -51,16 +54,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    try {
-      // TODO: Integrate Google Sign-In
-      await Future.delayed(const Duration(seconds: 2));
-      emit(const AuthSuccess(
-        userId: 'google_user_123',
-        displayName: 'مستخدم Google',
-      ));
-    } catch (e) {
-      emit(AuthFailure(message: e.toString()));
-    }
+    final result = await authRepository.loginWithGoogle();
+
+    result.fold(
+      (failure) => emit(AuthFailure(message: failure.message)),
+      (user) => emit(AuthSuccess(
+        userId: user.id,
+        displayName: user.name,
+      )),
+    );
   }
 
   Future<void> _onAppleLoginRequested(
@@ -68,16 +70,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    try {
-      // TODO: Integrate Apple Sign-In
-      await Future.delayed(const Duration(seconds: 2));
-      emit(const AuthSuccess(
-        userId: 'apple_user_123',
-        displayName: 'مستخدم Apple',
-      ));
-    } catch (e) {
-      emit(AuthFailure(message: e.toString()));
-    }
+    final result = await authRepository.loginWithApple();
+
+    result.fold(
+      (failure) => emit(AuthFailure(message: failure.message)),
+      (user) => emit(AuthSuccess(
+        userId: user.id,
+        displayName: user.name,
+      )),
+    );
   }
 
   Future<void> _onLogoutRequested(
@@ -85,8 +86,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(const AuthLoading());
-    // TODO: Clear tokens, cache
-    await Future.delayed(const Duration(milliseconds: 500));
+    await authRepository.logout();
     emit(const AuthUnauthenticated());
   }
 
@@ -94,9 +94,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthCheckRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(const AuthLoading());
-    // TODO: Check stored token validity
-    await Future.delayed(const Duration(seconds: 1));
-    emit(const AuthUnauthenticated());
+    final token = sharedPreferences.getString('auth_token');
+    if (token != null && token.isNotEmpty) {
+      // In production, you might want to call an API to verify the token is still valid.
+      emit(const AuthSuccess(
+        userId: 'stored_user',
+        displayName: 'مرحباً بك مجدداً',
+      ));
+    } else {
+      emit(const AuthUnauthenticated());
+    }
   }
 }

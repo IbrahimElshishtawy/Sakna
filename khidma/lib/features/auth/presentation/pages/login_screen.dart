@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/app_routes.dart';
+import '../../../../core/di/injection_container.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/login_form.dart';
@@ -45,13 +46,13 @@ class _LoginScreenState extends State<LoginScreen>
       parent: _contentController,
       curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
     );
-    _contentSlide = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _contentController,
-      curve: const Interval(0.1, 1.0, curve: Curves.easeOutCubic),
-    ));
+    _contentSlide =
+        Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _contentController,
+            curve: const Interval(0.1, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _contentController.forward();
   }
@@ -125,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen>
     final screenHeight = MediaQuery.of(context).size.height;
 
     return BlocProvider(
-      create: (_) => AuthBloc(),
+      create: (_) => sl<AuthBloc>(),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -210,16 +211,14 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            minHeight:
-                                constraints.maxHeight - viewInsetsBottom,
+                            minHeight: constraints.maxHeight - viewInsetsBottom,
                           ),
                           child: FadeTransition(
                             opacity: _contentFade,
                             child: SlideTransition(
                               position: _contentSlide,
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   SizedBox(height: screenHeight * 0.06),
 
@@ -228,30 +227,35 @@ class _LoginScreenState extends State<LoginScreen>
                                     tag: 'khidma_logo',
                                     child: Center(
                                       child: Container(
-                                        width: 90,
-                                        height: 90,
+                                        width: 130,
+                                        height: 130,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(24),
-                                          color: Colors.white
-                                              .withValues(alpha: 0.12),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.12,
+                                          ),
                                           border: Border.all(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.25),
+                                            color: Colors.white.withValues(
+                                              alpha: 0.25,
+                                            ),
                                             width: 1.5,
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: const Color(0xFF42A5F5)
-                                                  .withValues(alpha: 0.3),
+                                              color: const Color(
+                                                0xFF42A5F5,
+                                              ).withValues(alpha: 0.3),
                                               blurRadius: 30,
                                               spreadRadius: 5,
                                             ),
                                           ],
                                         ),
                                         child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(22),
+                                          borderRadius: BorderRadius.circular(
+                                            22,
+                                          ),
                                           child: Image.asset(
                                             'assets/icons/iconApp.png',
                                             fit: BoxFit.cover,
@@ -260,47 +264,30 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 28),
 
-                                  // Welcome Text
-                                  const Text(
-                                    'مرحباً بك',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
                                   const SizedBox(height: 8),
-                                  Text(
-                                    'سجّل دخولك للمتابعة',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.65),
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 40),
 
                                   // Glassmorphic Card
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(24),
                                     child: BackdropFilter(
                                       filter: ImageFilter.blur(
-                                          sigmaX: 15, sigmaY: 15),
+                                        sigmaX: 15,
+                                        sigmaY: 15,
+                                      ),
                                       child: Container(
                                         padding: const EdgeInsets.all(24),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(24),
-                                          color: Colors.white
-                                              .withValues(alpha: 0.08),
+                                          borderRadius: BorderRadius.circular(
+                                            24,
+                                          ),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.08,
+                                          ),
                                           border: Border.all(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.15),
+                                            color: Colors.white.withValues(
+                                              alpha: 0.15,
+                                            ),
                                             width: 1,
                                           ),
                                         ),
@@ -318,20 +305,23 @@ class _LoginScreenState extends State<LoginScreen>
 
                                   // Sign up prompt
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         'ليس لديك حساب؟',
                                         style: TextStyle(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.6),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.6,
+                                          ),
                                           fontSize: 14,
                                         ),
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          Navigator.pushNamed(context, AppRoutes.register);
+                                          Navigator.pushNamed(
+                                            context,
+                                            AppRoutes.register,
+                                          );
                                         },
                                         child: const Text(
                                           'إنشاء حساب',

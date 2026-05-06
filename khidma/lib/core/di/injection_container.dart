@@ -5,6 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../network/api_client.dart';
 import '../network/network_info.dart';
+import '../../features/auth/data/datasources/auth_remote_data_source.dart';
+import '../../features/auth/data/repositories/auth_repository_impl.dart';
+import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/auth/presentation/bloc/register_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -27,5 +32,28 @@ Future<void> init() async {
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => InternetConnectionChecker());
 
-  //! Features - will be added here
+  //! Features - Auth
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(apiClient: sl()),
+  );
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+      sharedPreferences: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => AuthBloc(
+      authRepository: sl(),
+      sharedPreferences: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => RegisterBloc(
+      authRepository: sl(),
+    ),
+  );
 }

@@ -1,12 +1,16 @@
 import 'dart:async';
+
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/repositories/auth_repository.dart';
 import 'register_event.dart';
 import 'register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
+  final AuthRepository authRepository;
   Timer? _otpTimer;
 
-  RegisterBloc() : super(const RegisterState()) {
+  RegisterBloc({required this.authRepository}) : super(const RegisterState()) {
     on<RegisterBasicInfoUpdated>(_onBasicInfoUpdated);
     on<RegisterSecurityUpdated>(_onSecurityUpdated);
     on<RegisterOtpRequested>(_onOtpRequested);
@@ -26,15 +30,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterBasicInfoUpdated event,
     Emitter<RegisterState> emit,
   ) {
-    emit(state.copyWith(
-      formData: state.formData.copyWith(
-        name: event.name,
-        email: event.email,
-        phone: event.phone,
-        countryCode: event.countryCode,
+    emit(
+      state.copyWith(
+        formData: state.formData.copyWith(
+          name: event.name,
+          email: event.email,
+          phone: event.phone,
+          countryCode: event.countryCode,
+        ),
+        fieldErrors: {},
       ),
-      fieldErrors: {},
-    ));
+    );
   }
 
   // ─── Step 2: Security ─────────────────────────────────────────────
@@ -43,13 +49,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterSecurityUpdated event,
     Emitter<RegisterState> emit,
   ) {
-    emit(state.copyWith(
-      formData: state.formData.copyWith(
-        password: event.password,
-        confirmPassword: event.confirmPassword,
+    emit(
+      state.copyWith(
+        formData: state.formData.copyWith(
+          password: event.password,
+          confirmPassword: event.confirmPassword,
+        ),
+        fieldErrors: {},
       ),
-      fieldErrors: {},
-    ));
+    );
   }
 
   // ─── Step 3: OTP ──────────────────────────────────────────────────
@@ -74,20 +82,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       }
     });
 
-    emit(state.copyWith(
-      status: RegisterStatus.initial,
-      otpSent: true,
-      otpCountdown: 60,
-    ));
+    emit(
+      state.copyWith(
+        status: RegisterStatus.initial,
+        otpSent: true,
+        otpCountdown: 60,
+      ),
+    );
   }
 
-  void _onOtpUpdated(
-    RegisterOtpUpdated event,
-    Emitter<RegisterState> emit,
-  ) {
-    emit(state.copyWith(
-      formData: state.formData.copyWith(otpCode: event.otpCode),
-    ));
+  void _onOtpUpdated(RegisterOtpUpdated event, Emitter<RegisterState> emit) {
+    emit(
+      state.copyWith(formData: state.formData.copyWith(otpCode: event.otpCode)),
+    );
   }
 
   Future<void> _onOtpVerified(
@@ -100,15 +107,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     await Future.delayed(const Duration(seconds: 1));
 
     if (state.formData.otpCode.length == 6) {
-      emit(state.copyWith(
-        status: RegisterStatus.initial,
-        otpVerified: true,
-      ));
+      emit(state.copyWith(status: RegisterStatus.initial, otpVerified: true));
     } else {
-      emit(state.copyWith(
-        status: RegisterStatus.failure,
-        errorMessage: 'الرمز غير صحيح، أعد المحاولة',
-      ));
+      emit(
+        state.copyWith(
+          status: RegisterStatus.failure,
+          errorMessage: 'الرمز غير صحيح، أعد المحاولة',
+        ),
+      );
     }
   }
 
@@ -134,15 +140,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     }
 
     if (event.isNationalId) {
-      emit(state.copyWith(
-        formData: state.formData.copyWith(nationalIdFile: event.file),
-        uploadProgress: 100,
-      ));
+      emit(
+        state.copyWith(
+          formData: state.formData.copyWith(nationalIdFile: event.file),
+          uploadProgress: 100,
+        ),
+      );
     } else {
-      emit(state.copyWith(
-        formData: state.formData.copyWith(selfieFile: event.file),
-        uploadProgress: 100,
-      ));
+      emit(
+        state.copyWith(
+          formData: state.formData.copyWith(selfieFile: event.file),
+          uploadProgress: 100,
+        ),
+      );
     }
   }
 
@@ -150,36 +160,39 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     RegisterTermsToggled event,
     Emitter<RegisterState> emit,
   ) {
-    emit(state.copyWith(
-      formData: state.formData.copyWith(
-        agreedToTerms: !state.formData.agreedToTerms,
+    emit(
+      state.copyWith(
+        formData: state.formData.copyWith(
+          agreedToTerms: !state.formData.agreedToTerms,
+        ),
       ),
-    ));
+    );
   }
 
   // ─── Navigation ───────────────────────────────────────────────────
 
-  void _onNextStep(
-    RegisterNextStep event,
-    Emitter<RegisterState> emit,
-  ) {
+  void _onNextStep(RegisterNextStep event, Emitter<RegisterState> emit) {
     final errors = _validateCurrentStep();
     if (errors.isNotEmpty) {
-      emit(state.copyWith(
-        fieldErrors: errors,
-        status: RegisterStatus.failure,
-        errorMessage: errors.values.first,
-      ));
+      emit(
+        state.copyWith(
+          fieldErrors: errors,
+          status: RegisterStatus.failure,
+          errorMessage: errors.values.first,
+        ),
+      );
       return;
     }
 
     if (state.currentStep < 3) {
-      emit(state.copyWith(
-        currentStep: state.currentStep + 1,
-        fieldErrors: {},
-        status: RegisterStatus.initial,
-        errorMessage: null,
-      ));
+      emit(
+        state.copyWith(
+          currentStep: state.currentStep + 1,
+          fieldErrors: {},
+          status: RegisterStatus.initial,
+          errorMessage: null,
+        ),
+      );
     }
   }
 
@@ -188,12 +201,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     Emitter<RegisterState> emit,
   ) {
     if (state.currentStep > 0) {
-      emit(state.copyWith(
-        currentStep: state.currentStep - 1,
-        fieldErrors: {},
-        status: RegisterStatus.initial,
-        errorMessage: null,
-      ));
+      emit(
+        state.copyWith(
+          currentStep: state.currentStep - 1,
+          fieldErrors: {},
+          status: RegisterStatus.initial,
+          errorMessage: null,
+        ),
+      );
     }
   }
 
@@ -210,7 +225,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         }
         if (data.email.trim().isEmpty) {
           errors['email'] = 'البريد الإلكتروني مطلوب';
-        } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(data.email)) {
+        } else if (!RegExp(
+          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+        ).hasMatch(data.email)) {
           errors['email'] = 'صيغة البريد غير صحيحة';
         }
         if (data.phone.trim().isEmpty) {
@@ -260,11 +277,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   ) async {
     final errors = _validateCurrentStep();
     if (errors.isNotEmpty) {
-      emit(state.copyWith(
-        fieldErrors: errors,
-        status: RegisterStatus.failure,
-        errorMessage: errors.values.first,
-      ));
+      emit(
+        state.copyWith(
+          fieldErrors: errors,
+          status: RegisterStatus.failure,
+          errorMessage: errors.values.first,
+        ),
+      );
       return;
     }
 
@@ -293,10 +312,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
       emit(state.copyWith(status: RegisterStatus.success));
     } catch (e) {
-      emit(state.copyWith(
-        status: RegisterStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: RegisterStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
