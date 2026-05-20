@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  khidma-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: khidma-api
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgresql://khidma_user:khidma_password@postgres:5432/khidma_db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - khidma-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: khidma-postgres
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=khidma_user
+      - POSTGRES_PASSWORD=khidma_password
+      - POSTGRES_DB=khidma_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - khidma-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: khidma-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - khidma-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: khidma-prometheus
+    ports:
+      - '9090:9090'
+    networks:
+      - khidma-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: khidma-grafana
+    ports:
+      - '3001:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - khidma-network
+    restart: unless-stopped
+
+networks:
+  khidma-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
