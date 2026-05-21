@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/auth_repository.dart';
 import 'register_event.dart';
@@ -68,26 +67,36 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   ) async {
     emit(state.copyWith(status: RegisterStatus.loading));
 
-    // TODO: Call actual OTP API
-    await Future.delayed(const Duration(seconds: 1));
+    final result = await authRepository.sendOtp(
+      phone: state.formData.phone,
+      countryCode: state.formData.countryCode,
+    );
 
-    _otpTimer?.cancel();
-    _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final remaining = 60 - timer.tick;
-      if (remaining <= 0) {
-        timer.cancel();
-        add(const RegisterOtpTimerTick(0));
-      } else {
-        add(RegisterOtpTimerTick(remaining));
-      }
-    });
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
+          status: RegisterStatus.failure,
+          errorMessage: failure.message,
+        ));
+      },
+      (_) {
+        _otpTimer?.cancel();
+        _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          final remaining = 60 - timer.tick;
+          if (remaining <= 0) {
+            timer.cancel();
+            add(const RegisterOtpTimerTick(0));
+          } else {
+            add(RegisterOtpTimerTick(remaining));
+          }
+        });
 
-    emit(
-      state.copyWith(
-        status: RegisterStatus.initial,
-        otpSent: true,
-        otpCountdown: 60,
-      ),
+        emit(state.copyWith(
+          status: RegisterStatus.initial,
+          otpSent: true,
+          otpCountdown: 60,
+        ));
+      },
     );
   }
 
@@ -103,19 +112,32 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   ) async {
     emit(state.copyWith(status: RegisterStatus.loading));
 
-    // TODO: Verify OTP with API
-    await Future.delayed(const Duration(seconds: 1));
+    final result = await authRepository.verifyOtp(
+      phone: state.formData.phone,
+      code: state.formData.otpCode,
+    );
 
-    if (state.formData.otpCode.length == 6) {
-      emit(state.copyWith(status: RegisterStatus.initial, otpVerified: true));
-    } else {
-      emit(
-        state.copyWith(
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
           status: RegisterStatus.failure,
-          errorMessage: 'الرمز غير صحيح، أعد المحاولة',
-        ),
-      );
-    }
+          errorMessage: failure.message,
+        ));
+      },
+      (isVerified) {
+        if (isVerified) {
+          emit(state.copyWith(
+            status: RegisterStatus.initial,
+            otpVerified: true,
+          ));
+        } else {
+          emit(state.copyWith(
+            status: RegisterStatus.failure,
+            errorMessage: 'الرمز غير صحيح، أعد المحاولة',
+          ));
+        }
+      },
+    );
   }
 
   void _onOtpTimerTick(
@@ -277,48 +299,29 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   ) async {
     final errors = _validateCurrentStep();
     if (errors.isNotEmpty) {
-      emit(
-        state.copyWith(
-          fieldErrors: errors,
-          status: RegisterStatus.failure,
-          errorMessage: errors.values.first,
-        ),
-      );
+      emit(state.copyWith(
+        fieldErrors: errors,
+        status: RegisterStatus.failure,
+        errorMessage: errors.values.first,
+      ));
       return;
     }
 
     emit(state.copyWith(status: RegisterStatus.loading));
 
-    try {
-      // TODO: Replace with actual API call using Dio Multipart
-      // final formDataDio = FormData.fromMap({
-      //   'name': state.formData.name,
-      //   'email': state.formData.email,
-      //   'phone': '${state.formData.countryCode}${state.formData.phone}',
-      //   'password': state.formData.password,
-      //   'otp_code': state.formData.otpCode,
-      //   'national_id': await MultipartFile.fromFile(
-      //     state.formData.nationalIdFile!.path,
-      //     filename: 'national_id.jpg',
-      //   ),
-      //   'selfie': await MultipartFile.fromFile(
-      //     state.formData.selfieFile!.path,
-      //     filename: 'selfie.jpg',
-      //   ),
-      // });
-      // await apiClient.post('/auth/register', data: formDataDio);
+    final result = await authRepository.register(state.formData);
 
-      await Future.delayed(const Duration(seconds: 2));
-
-      emit(state.copyWith(status: RegisterStatus.success));
-    } catch (e) {
-      emit(
-        state.copyWith(
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
           status: RegisterStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
+          errorMessage: failure.message,
+        ));
+      },
+      (_) {
+        emit(state.copyWith(status: RegisterStatus.success));
+      },
+    );
   }
 
   @override

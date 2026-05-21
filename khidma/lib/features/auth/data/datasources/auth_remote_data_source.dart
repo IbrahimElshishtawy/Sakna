@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/error/exceptions.dart';
@@ -13,15 +12,9 @@ abstract class AuthRemoteDataSource {
 
   Future<void> register(RegisterParams params);
 
-  Future<void> sendOtp({
-    required String phone,
-    required String countryCode,
-  });
+  Future<void> sendOtp({required String phone, required String countryCode});
 
-  Future<bool> verifyOtp({
-    required String phone,
-    required String code,
-  });
+  Future<bool> verifyOtp({required String phone, required String code});
 
   Future<UserModel> loginWithGoogle();
 
@@ -43,10 +36,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await apiClient.post(
         'auth/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
       if (response.statusCode == 200 && response.data != null) {
@@ -86,10 +76,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final formData = FormData.fromMap(formDataMap);
 
-      final response = await apiClient.post(
-        'auth/register',
-        data: formData,
-      );
+      final response = await apiClient.post('auth/register', data: formData);
 
       if (response.statusCode != 201 && response.statusCode != 200) {
         throw ServerException('فشل إنشاء الحساب. يرجى التحقق من البيانات.');
@@ -107,10 +94,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await apiClient.post(
         'auth/send-otp',
-        data: {
-          'phone': phone,
-          'country_code': countryCode,
-        },
+        data: {'phone': phone, 'country_code': countryCode},
       );
 
       if (response.statusCode != 200) {
@@ -122,17 +106,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<bool> verifyOtp({
-    required String phone,
-    required String code,
-  }) async {
+  Future<bool> verifyOtp({required String phone, required String code}) async {
     try {
       final response = await apiClient.post(
         'auth/verify-otp',
-        data: {
-          'phone': phone,
-          'code': code,
-        },
+        data: {'phone': phone, 'code': code},
       );
 
       if (response.statusCode == 200 && response.data != null) {

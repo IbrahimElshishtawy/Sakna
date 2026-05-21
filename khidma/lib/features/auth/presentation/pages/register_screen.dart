@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../core/app_routes.dart';
+import '../../../../core/di/injection_container.dart';
 import '../bloc/register_bloc.dart';
 import '../bloc/register_event.dart';
 import '../bloc/register_state.dart';
@@ -105,7 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     final screenHeight = MediaQuery.of(context).size.height;
 
     return BlocProvider(
-      create: (_) => RegisterBloc(),
+      create: (_) => sl<RegisterBloc>(),
       child: BlocConsumer<RegisterBloc, RegisterState>(
         listenWhen: (previous, current) =>
             previous.currentStep != current.currentStep ||
