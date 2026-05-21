@@ -3,6 +3,4 @@ import '../controllers/onboarding_controller.dart';
 import '../states/onboarding_state.dart';
 
 final onboardingControllerProvider =
-    StateNotifierProvider<OnboardingController, OnboardingState>((ref) {
-  return OnboardingController();
-});
+    NotifierProvider<OnboardingController, OnboardingState>(OnboardingController.new);

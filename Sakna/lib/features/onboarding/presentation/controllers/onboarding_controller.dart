@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../states/onboarding_state.dart';
 
-class OnboardingController extends StateNotifier<OnboardingState> {
-  OnboardingController() : super(const OnboardingState());
+class OnboardingController extends Notifier<OnboardingState> {
+  @override
+  OnboardingState build() => const OnboardingState();
 
   void setPageIndex(int index) {
     state = state.copyWith(currentIndex: index);
