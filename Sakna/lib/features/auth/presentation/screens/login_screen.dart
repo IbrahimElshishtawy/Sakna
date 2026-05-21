@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _phoneController,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: AppColors.greyLight.withOpacity(0.3),
+                  fillColor: AppColors.greyLight.withValues(alpha: 0.3),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,

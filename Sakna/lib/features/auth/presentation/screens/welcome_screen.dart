@@ -33,7 +33,7 @@ class WelcomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primary.withOpacity(0.9),
+                    AppColors.primary.withValues(alpha: 0.9),
                     Colors.transparent,
                   ],
                   begin: Alignment.bottomCenter,

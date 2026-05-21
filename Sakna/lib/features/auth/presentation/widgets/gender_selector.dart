@@ -31,7 +31,7 @@ class _GenderSelectorState extends State<GenderSelector> {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.greyLight.withOpacity(0.3),
+        color: AppColors.greyLight.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -75,7 +75,7 @@ class _GenderSelectorState extends State<GenderSelector> {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     )

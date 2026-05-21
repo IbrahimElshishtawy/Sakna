@@ -71,7 +71,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.greyLight.withOpacity(0.5),
+                    color: AppColors.greyLight.withValues(alpha: 0.5),
                   ),
                   child: const Center(
                     child: Icon(Icons.person, size: 50, color: AppColors.textSecondary),
@@ -149,7 +149,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.accent.withOpacity(0.2),
+                      color: AppColors.accent.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.notifications_active, color: AppColors.accent, size: 20),
@@ -173,7 +173,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   ),
                   Switch(
                     value: _offersEnabled,
-                    activeColor: AppColors.accent,
+                    activeThumbColor: AppColors.accent,
                     onChanged: (val) {
                       setState(() {
                         _offersEnabled = val;
@@ -241,7 +241,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           hintTextDirection: TextDirection.rtl,
           hintStyle: const TextStyle(color: AppColors.textSecondary),
           filled: true,
-          fillColor: AppColors.greyLight.withOpacity(0.3),
+          fillColor: AppColors.greyLight.withValues(alpha: 0.3),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
