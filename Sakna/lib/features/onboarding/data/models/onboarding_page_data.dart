@@ -1,15 +1,14 @@
-class OnboardingPageData {
-  final String title;
-  final String subtitle;
-  final String imagePath;
-  final String buttonText;
-  final bool isMap; // To show different top layout for map
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  OnboardingPageData({
-    required this.title,
-    required this.subtitle,
-    required this.imagePath,
-    required this.buttonText,
-    this.isMap = false,
-  });
+part 'onboarding_page_data.freezed.dart';
+
+@freezed
+abstract class OnboardingPageData with _$OnboardingPageData {
+  const factory OnboardingPageData({
+    required String title,
+    required String subtitle,
+    required String imagePath,
+    required String buttonText,
+    @Default(false) bool isMap, // To show different top layout for map
+  }) = _OnboardingPageData;
 }
