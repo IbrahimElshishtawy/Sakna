@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/theme/app_colors.dart';
@@ -30,10 +32,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -49,7 +48,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            
+
             // Subtitle
             const Text(
               'أضف تفاصيلك لتقديم تجربة خدمة مخصصة وأكثر دقة لك.',
@@ -61,7 +60,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Avatar picker
             Stack(
               alignment: Alignment.bottomRight,
@@ -74,7 +73,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                     color: AppColors.greyLight.withValues(alpha: 0.5),
                   ),
                   child: const Center(
-                    child: Icon(Icons.person, size: 50, color: AppColors.textSecondary),
+                    child: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
                 Container(
@@ -84,12 +87,16 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
-                  child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 40),
-            
+
             // Form Fields
             _buildLabel('الاسم الكامل'),
             _buildTextField(
@@ -97,7 +104,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               hint: 'أحمد محمد',
               icon: Icons.badge_outlined,
             ),
-            
+
             _buildLabel('البريد الإلكتروني'),
             _buildTextField(
               controller: _emailController,
@@ -105,7 +112,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
             ),
-            
+
             _buildLabel('الجنس'),
             GenderSelector(
               onChanged: (gender) {
@@ -115,7 +122,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               },
             ),
             const SizedBox(height: 24),
-            
+
             _buildLabel('تاريخ الميلاد'),
             _buildTextField(
               controller: _dobController,
@@ -130,13 +137,14 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   lastDate: DateTime.now(),
                 );
                 if (date != null) {
-                  _dobController.text = "\${date.day} / \${date.month} / \${date.year}";
+                  _dobController.text =
+                      "\${date.day} / \${date.month} / \${date.year}";
                 }
               },
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Notification toggle
             Container(
               padding: const EdgeInsets.all(16),
@@ -152,7 +160,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                       color: AppColors.accent.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.notifications_active, color: AppColors.accent, size: 20),
+                    child: const Icon(
+                      Icons.notifications_active,
+                      color: AppColors.accent,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   const Expanded(
@@ -161,12 +173,18 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                       children: [
                         Text(
                           'إشعارات العروض',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         SizedBox(height: 4),
                         Text(
                           'تلقي تنبيهات عند تأكيد أو تعديل الموعد',
-                          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -183,9 +201,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Save Button
             PrimaryButton(
               text: 'حفظ',
@@ -247,7 +265,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             borderSide: BorderSide.none,
           ),
           suffixIcon: Icon(icon, color: AppColors.textSecondary),
-          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 18,
+            horizontal: 16,
+          ),
         ),
       ),
     );
