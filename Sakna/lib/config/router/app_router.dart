@@ -4,6 +4,7 @@ import '../../features/auth/presentation/screens/welcome_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_verification_screen.dart';
 import '../../features/auth/presentation/screens/complete_profile_screen.dart';
+import '../../features/auth/presentation/screens/register_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/welcome',
@@ -29,10 +30,9 @@ final appRouter = GoRouter(
       path: '/home',
       builder: (context, state) => const _PlaceholderScreen(title: 'Home Screen'),
     ),
-    // Placeholder for register route used in welcome
     GoRoute(
       path: '/register',
-      builder: (context, state) => const _PlaceholderScreen(title: 'Register Screen'),
+      builder: (context, state) => const RegisterScreen(),
     ),
   ],
 );
