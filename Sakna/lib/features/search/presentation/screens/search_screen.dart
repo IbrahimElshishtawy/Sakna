@@ -13,7 +13,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  List<String> _recentSearches = [
+  final List<String> _recentSearches = [
     'تنظيف منازل شامل',
     'طبيب أطفال زيارة منزلية',
     'صيانة تكييف مركزي',
@@ -171,6 +171,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSearchInputHeader() {
+    final isSearching = _searchQuery.trim().isNotEmpty;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       color: Colors.white,
