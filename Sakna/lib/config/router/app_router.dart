@@ -5,6 +5,9 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_verification_screen.dart';
 import '../../features/auth/presentation/screens/complete_profile_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/home/presentation/screens/main_shell_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/search/presentation/screens/search_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/welcome',
@@ -25,14 +28,35 @@ final appRouter = GoRouter(
       path: '/complete-profile',
       builder: (context, state) => const CompleteProfileScreen(),
     ),
-    // Placeholder for home route used in complete profile
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => const _PlaceholderScreen(title: 'Home Screen'),
-    ),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+    // ShellRoute for persistent bottom tab bar layout
+    ShellRoute(
+      builder: (context, state, child) => MainShellScreen(child: child),
+      routes: [
+        GoRoute(
+          path: '/home',
+          builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/bookings',
+          builder: (context, state) => const _PlaceholderScreen(title: 'الحجوزات'),
+        ),
+        GoRoute(
+          path: '/search',
+          builder: (context, state) => const SearchScreen(),
+        ),
+        GoRoute(
+          path: '/offers',
+          builder: (context, state) => const _PlaceholderScreen(title: 'العروض'),
+        ),
+        GoRoute(
+          path: '/profile',
+          builder: (context, state) => const _PlaceholderScreen(title: 'حسابي'),
+        ),
+      ],
     ),
   ],
 );
