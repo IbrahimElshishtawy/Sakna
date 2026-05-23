@@ -8,6 +8,7 @@ import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/home/presentation/screens/main_shell_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
+import '../../features/services/presentation/screens/services_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/welcome',
@@ -49,8 +50,8 @@ final appRouter = GoRouter(
           builder: (context, state) => const SearchScreen(),
         ),
         GoRoute(
-          path: '/offers',
-          builder: (context, state) => const _PlaceholderScreen(title: 'العروض'),
+          path: '/services',
+          builder: (context, state) => const ServicesScreen(),
         ),
         GoRoute(
           path: '/profile',

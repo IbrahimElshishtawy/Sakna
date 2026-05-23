@@ -15,7 +15,7 @@ class MainShellScreen extends StatelessWidget {
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/bookings')) return 1;
     if (location.startsWith('/search')) return 2;
-    if (location.startsWith('/offers')) return 3;
+    if (location.startsWith('/services')) return 3;
     if (location.startsWith('/profile')) return 4;
     return 0;
   }
@@ -32,7 +32,7 @@ class MainShellScreen extends StatelessWidget {
         context.go('/search');
         break;
       case 3:
-        context.go('/offers');
+        context.go('/services');
         break;
       case 4:
         context.go('/profile');
@@ -90,9 +90,9 @@ class MainShellScreen extends StatelessWidget {
                 _buildNavItem(
                   context,
                   index: 3,
-                  icon: Icons.local_offer,
-                  inactiveIcon: Icons.local_offer_outlined,
-                  label: 'العروض',
+                  icon: Icons.grid_view_rounded,
+                  inactiveIcon: Icons.grid_view_outlined,
+                  label: 'الخدمات',
                   isSelected: currentIndex == 3,
                 ),
                 _buildNavItem(
