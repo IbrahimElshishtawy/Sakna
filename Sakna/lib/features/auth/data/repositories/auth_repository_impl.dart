@@ -19,6 +19,21 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> registerUser({
+    required String name,
+    required String phone,
+    required String email,
+    required String password,
+  }) async {
+    await remoteDataSource.registerUser(
+      name: name,
+      phone: phone,
+      email: email,
+      password: password,
+    );
+  }
+
+  @override
   Future<UserEntity> verifyOtp(String phoneNumber, String otp) async {
     final userModel = await remoteDataSource.verifyOtp(phoneNumber, otp);
     await localDataSource.cacheUser(userModel);

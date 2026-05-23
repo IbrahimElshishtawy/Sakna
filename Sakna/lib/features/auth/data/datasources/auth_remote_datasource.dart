@@ -5,6 +5,12 @@ abstract class AuthRemoteDataSource {
   Future<void> loginWithPhone(String phoneNumber);
   Future<UserModel> verifyOtp(String phoneNumber, String otp);
   Future<UserModel> completeProfile(UserModel user);
+  Future<void> registerUser({
+    required String name,
+    required String phone,
+    required String email,
+    required String password,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -16,6 +22,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> loginWithPhone(String phoneNumber) async {
     // Implement actual API call here
     // await dio.post('/auth/login', data: {'phone': phoneNumber});
+    await Future.delayed(const Duration(seconds: 1)); // Mock delay
+  }
+
+  @override
+  Future<void> registerUser({
+    required String name,
+    required String phone,
+    required String email,
+    required String password,
+  }) async {
+    // Implement actual API call here
+    // await dio.post('/auth/register', data: {
+    //   'name': name,
+    //   'phone': phone,
+    //   'email': email,
+    //   'password': password,
+    // });
     await Future.delayed(const Duration(seconds: 1)); // Mock delay
   }
 
