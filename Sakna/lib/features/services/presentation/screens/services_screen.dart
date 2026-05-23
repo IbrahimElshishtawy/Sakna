@@ -14,9 +14,6 @@ class ServicesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch state to check search or filter states
-    final state = ref.watch(servicesProvider);
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(

@@ -176,7 +176,6 @@ class SubscriptionPackagesSlider extends StatelessWidget {
                 ),
               );
             },
-            ),
           ),
         ),
       ],

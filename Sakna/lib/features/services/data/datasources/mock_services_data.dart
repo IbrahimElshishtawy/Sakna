@@ -436,7 +436,7 @@ class MockServicesData {
               description: 'غسيل شامل وتلميع للجدران، الأرضيات، النوافذ، جلي البلاط، تنظيف الأبواب والمطابخ بأجهزة البخار',
               priceEstimate: '500 ر.س',
               duration: '5-8 ساعات',
-              icon: Icons.sparkles,
+              icon: Icons.auto_awesome,
             ),
             ServiceItem(
               id: 'clean_3',
@@ -681,7 +681,7 @@ class MockServicesData {
               description: 'تركيب مفاتيح اللمس الذكية والأفياش وبرمجتها للربط عبر تطبيقات الهواتف أو أليكسا وجوجل هوم',
               priceEstimate: '250 ر.س',
               duration: '2 ساعة',
-              icon: Icons.smart_home_outlined,
+              icon: Icons.settings_suggest_outlined,
             ),
             ServiceItem(
               id: 'smart_2',

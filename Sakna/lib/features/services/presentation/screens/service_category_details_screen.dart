@@ -6,6 +6,7 @@ import '../../domain/entities/service_sub_category.dart';
 import '../../domain/entities/service_item.dart';
 import '../../data/datasources/mock_services_data.dart';
 import '../providers/services_provider.dart';
+import '../providers/services_state.dart';
 
 class ServiceCategoryDetailsScreen extends ConsumerWidget {
   const ServiceCategoryDetailsScreen({super.key});
