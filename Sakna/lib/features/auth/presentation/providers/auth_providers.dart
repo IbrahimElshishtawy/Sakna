@@ -8,6 +8,7 @@ import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/complete_profile_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
+import '../../domain/usecases/register_user_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
 import '../controllers/auth_controller.dart';
 import '../states/auth_state.dart';
@@ -38,6 +39,10 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 // --- Use Cases ---
 final loginUseCaseProvider = Provider<LoginUseCase>((ref) {
   return LoginUseCase(ref.watch(authRepositoryProvider));
+});
+
+final registerUserUseCaseProvider = Provider<RegisterUserUseCase>((ref) {
+  return RegisterUserUseCase(ref.watch(authRepositoryProvider));
 });
 
 final verifyOtpUseCaseProvider = Provider<VerifyOtpUseCase>((ref) {
