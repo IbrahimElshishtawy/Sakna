@@ -33,8 +33,8 @@ class HomeScreen extends ConsumerWidget {
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(
-                  left: 5.0,
-                  right: 5.0,
+                  left: 7.0,
+                  right: 7.0,
                   top: 5.0,
                   bottom: 30.0,
                 ), // bottom padded for floating navbar
