@@ -122,7 +122,16 @@ export class AuthController {
       ? `https://cdn.sakna.com/avatars/${userId}_${Date.now()}_${file.originalname}`
       : undefined;
 
-    const user = await this.authUseCase.completeProfile(userId, dto.gender, dto.dob, offersEnabled, avatarUrl);
+    const user = await this.authUseCase.completeProfile(
+      userId,
+      dto.gender,
+      dto.dob,
+      offersEnabled,
+      avatarUrl,
+      dto.phone,
+      dto.country_code,
+      dto.verification_token,
+    );
 
     return {
       status: 'success',

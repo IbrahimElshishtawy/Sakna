@@ -224,4 +224,55 @@ describe('AuthUseCase', () => {
       await expect(useCase.login(dto)).rejects.toThrow('Invalid login credentials');
     });
   });
+
+  describe('completeProfile', () => {
+    it('should link verified phone number successfully during profile completion', async () => {
+      const mockUser = new UserEntity({
+        id: 'usr_social',
+        name: 'Ahmad Mohammad',
+        email: 'user@gmail.com',
+        phone: null, // social user
+        countryCode: null,
+      });
+
+      repository.findUserById.mockResolvedValue(mockUser);
+      repository.findUserByEmailOrPhone.mockResolvedValue(null);
+      repository.updateUser.mockImplementation(async (id, data) => new UserEntity({ ...mockUser, ...data }));
+
+      const validToken = jwt.sign(
+        { phone: '1002345678', countryCode: '+20', verified: true },
+        verificationSecret
+      );
+
+      const result = await useCase.completeProfile(
+        'usr_social',
+        'MALE',
+        '1995-08-20',
+        true,
+        'https://cdn.sakna.com/avatar.png',
+        '1002345678',
+        '+20',
+        validToken
+      );
+
+      expect(result.phone).toBe('1002345678');
+      expect(result.countryCode).toBe('+20');
+      expect(result.isProfileComplete).toBe(true);
+    });
+
+    it('should throw error if phone is not provided but user has no phone bound', async () => {
+      const mockUser = new UserEntity({
+        id: 'usr_social',
+        name: 'Ahmad Mohammad',
+        email: 'user@gmail.com',
+        phone: null,
+      });
+
+      repository.findUserById.mockResolvedValue(mockUser);
+
+      await expect(
+        useCase.completeProfile('usr_social', 'MALE', '1995-08-20', true)
+      ).rejects.toThrow('Linking a verified phone number is required to complete this profile');
+    });
+  });
 });

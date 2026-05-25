@@ -228,10 +228,45 @@ export class AuthUseCase {
     dob: string,
     offersEnabled: boolean,
     avatarUrl?: string,
+    phone?: string,
+    countryCode?: string,
+    verificationToken?: string,
   ): Promise<UserEntity> {
     const user = await this.authRepository.findUserById(userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Link phone number if not present (mandatory for incomplete social logins)
+    if (!user.phone) {
+      if (!phone || !countryCode || !verificationToken) {
+        throw new HttpException('Linking a verified phone number is required to complete this profile', HttpStatus.BAD_REQUEST);
+      }
+
+      // Verify the phone's OTP verification token
+      try {
+        const decoded = jwt.verify(verificationToken, this.verificationSecret) as {
+          phone: string;
+          countryCode: string;
+          verified: boolean;
+        };
+
+        if (decoded.phone !== phone || decoded.countryCode !== countryCode || !decoded.verified) {
+          throw new HttpException('Verification token does not match the provided phone details', HttpStatus.BAD_REQUEST);
+        }
+      } catch {
+        throw new HttpException('Invalid or expired verification token. Please verify your phone number first.', HttpStatus.BAD_REQUEST);
+      }
+
+      // Ensure the phone number isn't already taken by another account
+      const duplicateUser = await this.authRepository.findUserByEmailOrPhone('', phone, countryCode);
+      if (duplicateUser && duplicateUser.id !== user.id) {
+        throw new HttpException('This phone number is already linked to another account', HttpStatus.CONFLICT);
+      }
+
+      // Link phone number to user
+      user.phone = phone;
+      user.countryCode = countryCode;
     }
 
     user.completeProfile({ gender, dob, offersEnabled, avatarUrl });

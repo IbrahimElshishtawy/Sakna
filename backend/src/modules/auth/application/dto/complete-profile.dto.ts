@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsIn, Matches, IsBooleanString } from 'class-validator';
+import { IsNotEmpty, IsIn, Matches, IsBooleanString, IsOptional, IsString } from 'class-validator';
 
 export class CompleteProfileDto {
   @IsNotEmpty()
@@ -12,4 +12,16 @@ export class CompleteProfileDto {
   @IsNotEmpty()
   @IsBooleanString({ message: 'offers_enabled must be a boolean string ("true" or "false")' })
   offers_enabled: string; // Since multipart/form-data sends everything as strings
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  country_code?: string;
+
+  @IsOptional()
+  @IsString()
+  verification_token?: string;
 }
