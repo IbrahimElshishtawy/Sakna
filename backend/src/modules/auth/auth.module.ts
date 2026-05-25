@@ -5,7 +5,6 @@ import { AuthService } from './services/auth.service';
 import { SessionService } from './services/session.service';
 import { OtpService } from './services/otp.service';
 import { RedisService } from './services/redis.service';
-import { SocialAuthService } from './social-auth.service'; // Wait, let's keep it in services folder. Yes, it was saved inside src/modules/auth/services/social-auth.service.ts
 import { SocialAuthService as CorrectSocialAuthService } from './services/social-auth.service';
 import { UserRepository } from './repositories/user.repository';
 import { SessionRepository } from './repositories/session.repository';
