@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../config/theme/app_colors.dart';
+import '../../../../config/theme/theme_provider.dart';
 import '../../../../core/presentation/widgets/primary_button.dart';
 import '../../../../core/presentation/widgets/sakna_logo.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 import '../providers/auth_providers.dart';
 import '../states/auth_state.dart';
 
@@ -20,20 +21,45 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _agreeToTerms = false;
   String? _formError;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.addListener(_onPasswordChanged);
+    _confirmPasswordController.addListener(_onConfirmPasswordChanged);
+  }
+
+  void _onPasswordChanged() {
+    setState(() {});
+  }
+
+  void _onConfirmPasswordChanged() {
+    setState(() {});
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _passwordController.removeListener(_onPasswordChanged);
     _passwordController.dispose();
+    _confirmPasswordController.removeListener(_onConfirmPasswordChanged);
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _handleRegister() async {
+  bool get _showConfirmPassword => _passwordController.text.isNotEmpty;
+  bool get _passwordsMatch =>
+      _passwordController.text.isNotEmpty &&
+      _confirmPasswordController.text.isNotEmpty &&
+      _passwordController.text == _confirmPasswordController.text;
+
+  void _handleRegister(AppTranslator t) async {
     setState(() {
       _formError = null;
     });
@@ -42,9 +68,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       return;
     }
 
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() {
+        _formError = t.translate('passwords_mismatch');
+      });
+      return;
+    }
+
     if (!_agreeToTerms) {
       setState(() {
-        _formError = 'يرجى الموافقة على الشروط والأحكام و سياسة الخصوصية';
+        _formError = t.translate('agree_terms_error');
       });
       return;
     }
@@ -68,6 +101,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeColors = ref.watch(themeColorsProvider);
+    final t = ref.watch(translationProvider);
+
     ref.listen<AuthState>(authControllerProvider, (previous, next) {
       next.maybeWhen(
         error: (message) {
@@ -75,7 +111,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             SnackBar(
               content: Text(
                 message,
-                textAlign: TextAlign.right,
+                textAlign: t.isArabic ? TextAlign.right : TextAlign.left,
                 style: const TextStyle(fontFamily: 'Cairo'),
               ),
               backgroundColor: Colors.red,
@@ -93,7 +129,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: themeColors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -101,16 +137,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(top: 80, bottom: 40),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primary,
-                    Color(0xFF0F203C),
+                    themeColors.primary,
+                    themeColors.isDark ? themeColors.surface : const Color(0xFF0F203C),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(32),
                   bottomRight: Radius.circular(32),
                 ),
@@ -122,40 +158,41 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     child: SaknaLogo(size: 76),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'SAKNA',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: themeColors.accent,
                       letterSpacing: 2,
                       fontFamily: 'Cairo',
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'خدماتك المنزلية والطبية في مكان',
-                    style: TextStyle(
+                  Text(
+                    t.translate('sakna_desc'),
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white70,
                       fontWeight: FontWeight.w500,
+                      fontFamily: 'Cairo',
                     ),
                   ),
                 ],
               ),
             ),
             
-            // White elevated card holding the registration form
+            // Elevated card holding the registration form
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: themeColors.surface,
                   borderRadius: BorderRadius.circular(28),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withValues(alpha: themeColors.isDark ? 0.2 : 0.05),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -167,23 +204,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Subtitle header inside card
-                      const Center(
+                      Center(
                         child: Column(
                           children: [
                             Text(
-                              'إنشاء حساب جديد',
+                              t.translate('create_account'),
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: themeColors.textPrimary,
+                                fontFamily: 'Cairo',
                               ),
                             ),
-                            SizedBox(height: 6),
+                            const SizedBox(height: 6),
                             Text(
-                              'انضم إلينا للحصول على رعاية متميزة',
+                              t.translate('join_us'),
                               style: TextStyle(
                                 fontSize: 13,
-                                color: AppColors.textSecondary,
+                                color: themeColors.textSecondary,
+                                fontFamily: 'Cairo',
                               ),
                             ),
                           ],
@@ -192,17 +231,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       const SizedBox(height: 32),
 
                       // Name Field
-                      _buildFieldLabel('الاسم بالكامل'),
+                      _buildFieldLabel(t.translate('fullname'), themeColors),
                       _buildTextFormField(
                         controller: _nameController,
-                        hint: 'أدخل اسمك الثلاثي',
+                        hint: t.translate('enter_fullname'),
                         icon: Icons.person_outline,
+                        themeColors: themeColors,
+                        t: t,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'يرجى إدخال الاسم بالكامل';
+                            return t.translate('invalid_name');
                           }
                           if (value.trim().split(' ').length < 3) {
-                            return 'يرجى إدخال اسمك ثلاثي كما هو مطلوب';
+                            return t.translate('invalid_name');
                           }
                           return null;
                         },
@@ -210,26 +251,28 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       const SizedBox(height: 16),
 
                       // Phone Field (Formatted like Screenshot)
-                      _buildFieldLabel('رقم الهاتف'),
-                      _buildPhoneInputField(),
+                      _buildFieldLabel(t.translate('phone'), themeColors),
+                      _buildPhoneInputField(themeColors, t),
                       const SizedBox(height: 16),
 
                       // Email Field
-                      _buildFieldLabel('البريد الإلكتروني'),
+                      _buildFieldLabel(t.translate('email'), themeColors),
                       _buildTextFormField(
                         controller: _emailController,
                         hint: 'name@example.com',
                         icon: Icons.mail_outline,
+                        themeColors: themeColors,
+                        t: t,
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'يرجى إدخال البريد الإلكتروني';
+                            return t.translate('invalid_email');
                           }
                           final emailRegExp = RegExp(
                             r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                           );
                           if (!emailRegExp.hasMatch(value.trim())) {
-                            return 'يرجى إدخال بريد إلكتروني صالح';
+                            return t.translate('invalid_email');
                           }
                           return null;
                         },
@@ -237,43 +280,100 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       const SizedBox(height: 16),
 
                       // Password Field
-                      _buildFieldLabel('كلمة المرور'),
-                      _buildPasswordFormField(),
-                      const SizedBox(height: 24),
+                      _buildFieldLabel(t.translate('password'), themeColors),
+                      _buildPasswordFormField(themeColors, t),
 
-                      // Terms and Conditions checkbox
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Transform.scale(
-                            scale: 0.9,
-                            child: Checkbox(
-                              value: _agreeToTerms,
-                              activeColor: AppColors.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              onChanged: (val) {
-                                setState(() {
-                                  _agreeToTerms = val ?? false;
-                                });
-                              },
-                            ),
-                          ),
-                          const Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 10.0, right: 4.0),
-                              child: Text(
-                                'أوافق على الشروط والأحكام و سياسة الخصوصية الخاصة بالمنصة.',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.textSecondary,
-                                  height: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      // Confirm Password Field (Animated Switcher / Size)
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: _showConfirmPassword
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 16),
+                                  _buildFieldLabel(t.translate('confirm_password'), themeColors),
+                                  _buildConfirmPasswordFormField(themeColors, t),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+
+                      // Terms and Conditions and Matching message (Animated Switcher / Size)
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: _passwordsMatch
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 20),
+                                  // Passwords match badge
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.green.withValues(alpha: 0.5), width: 1),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            t.translate('passwords_match_msg'),
+                                            style: const TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'Cairo',
+                                              height: 1.4,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // Terms and Conditions checkbox
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Transform.scale(
+                                        scale: 0.9,
+                                        child: Checkbox(
+                                          value: _agreeToTerms,
+                                          activeColor: themeColors.primary,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          onChanged: (val) {
+                                            setState(() {
+                                              _agreeToTerms = val ?? false;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(top: 10.0, left: 4.0, right: 4.0),
+                                          child: Text(
+                                            t.translate('agree_terms'),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: themeColors.textSecondary,
+                                              height: 1.5,
+                                              fontFamily: 'Cairo',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
                       ),
 
                       if (_formError != null) ...[
@@ -284,6 +384,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             color: Colors.red,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Cairo',
                           ),
                         ),
                       ],
@@ -292,16 +393,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                       // Submit button
                       isLoading
-                          ? const Center(
+                          ? Center(
                               child: CircularProgressIndicator(
-                                color: AppColors.primary,
+                                color: themeColors.accent,
                               ),
                             )
                           : PrimaryButton(
-                              text: 'إنشاء الحساب',
-                              icon: Icons.arrow_back, // Points left for RTL forward
+                              text: t.translate('create_account'),
+                              icon: t.isArabic ? Icons.arrow_back : Icons.arrow_forward,
                               iconFirst: false,
-                              onPressed: _handleRegister,
+                              onPressed: () => _handleRegister(t),
                             ),
 
                       const SizedBox(height: 24),
@@ -311,20 +412,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         child: GestureDetector(
                           onTap: () => context.go('/login'),
                           child: RichText(
-                            text: const TextSpan(
-                              style: TextStyle(
+                            text: TextSpan(
+                              style: const TextStyle(
                                 fontFamily: 'Cairo',
                                 fontSize: 14,
                               ),
                               children: [
                                 TextSpan(
-                                  text: 'لديك حساب بالفعل؟ ',
-                                  style: TextStyle(color: AppColors.textSecondary),
+                                  text: '${t.translate('already_have_account')} ',
+                                  style: TextStyle(color: themeColors.textSecondary),
                                 ),
                                 TextSpan(
-                                  text: 'تسجيل الدخول',
+                                  text: t.translate('login'),
                                   style: TextStyle(
-                                    color: AppColors.accent,
+                                    color: themeColors.accent,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -345,9 +446,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildTrustBadge(Icons.verified_user_outlined, 'آمن 100%'),
-                  _buildTrustBadge(Icons.health_and_safety_outlined, 'دكاترة معتمدون'),
-                  _buildTrustBadge(Icons.thumb_up_alt_outlined, 'جودة سهلة'),
+                  _buildTrustBadge(Icons.verified_user_outlined, t.isArabic ? 'آمن 100%' : '100% Secure', themeColors),
+                  _buildTrustBadge(Icons.health_and_safety_outlined, t.isArabic ? 'أطباء معتمدون' : 'Certified Doctors', themeColors),
+                  _buildTrustBadge(Icons.thumb_up_alt_outlined, t.isArabic ? 'جودة مضمونة' : 'Guaranteed Quality', themeColors),
                 ],
               ),
             ),
@@ -357,15 +458,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  Widget _buildFieldLabel(String label) {
+  Widget _buildFieldLabel(String label, dynamic themeColors) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0, right: 4.0),
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4.0, right: 4.0),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: AppColors.textPrimary,
+          color: themeColors.textPrimary,
+          fontFamily: 'Cairo',
         ),
       ),
     );
@@ -375,6 +477,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     required TextEditingController controller,
     required String hint,
     required IconData icon,
+    required dynamic themeColors,
+    required AppTranslator t,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
@@ -382,50 +486,52 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
-      textAlign: TextAlign.right,
+      textAlign: t.isArabic ? TextAlign.right : TextAlign.left,
+      style: TextStyle(color: themeColors.textPrimary, fontFamily: 'Cairo'),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        hintStyle: TextStyle(color: themeColors.textSecondary, fontSize: 14, fontFamily: 'Cairo'),
         filled: true,
-        fillColor: AppColors.greyLight.withValues(alpha: 0.3),
+        fillColor: themeColors.border.withValues(alpha: 0.3),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: Icon(icon, color: AppColors.textSecondary, size: 22),
+        suffixIcon: Icon(icon, color: themeColors.textSecondary, size: 22),
         contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       ),
     );
   }
 
-  Widget _buildPasswordFormField() {
+  Widget _buildPasswordFormField(dynamic themeColors, AppTranslator t) {
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscurePassword,
-      textAlign: TextAlign.right,
+      textAlign: t.isArabic ? TextAlign.right : TextAlign.left,
+      style: TextStyle(color: themeColors.textPrimary, fontFamily: 'Cairo'),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'يرجى إدخال كلمة المرور';
+          return t.translate('invalid_password');
         }
         if (value.length < 6) {
-          return 'كلمة المرور يجب أن لا تقل عن 6 أحرف';
+          return t.translate('invalid_password');
         }
         return null;
       },
       decoration: InputDecoration(
         hintText: '••••••••',
-        hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        hintStyle: TextStyle(color: themeColors.textSecondary, fontSize: 14, fontFamily: 'Cairo'),
         filled: true,
-        fillColor: AppColors.greyLight.withValues(alpha: 0.3),
+        fillColor: themeColors.border.withValues(alpha: 0.3),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary, size: 22),
+        suffixIcon: Icon(Icons.lock_outline, color: themeColors.textSecondary, size: 22),
         prefixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-            color: AppColors.textSecondary,
+            color: themeColors.textSecondary,
             size: 20,
           ),
           onPressed: () {
@@ -439,7 +545,37 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  Widget _buildPhoneInputField() {
+  Widget _buildConfirmPasswordFormField(dynamic themeColors, AppTranslator t) {
+    return TextFormField(
+      controller: _confirmPasswordController,
+      obscureText: _obscurePassword,
+      textAlign: t.isArabic ? TextAlign.right : TextAlign.left,
+      style: TextStyle(color: themeColors.textPrimary, fontFamily: 'Cairo'),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return t.translate('enter_confirm_password');
+        }
+        if (value != _passwordController.text) {
+          return t.translate('passwords_mismatch');
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: '••••••••',
+        hintStyle: TextStyle(color: themeColors.textSecondary, fontSize: 14, fontFamily: 'Cairo'),
+        filled: true,
+        fillColor: themeColors.border.withValues(alpha: 0.3),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        suffixIcon: Icon(Icons.lock_outline, color: themeColors.textSecondary, size: 22),
+        contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+      ),
+    );
+  }
+
+  Widget _buildPhoneInputField(dynamic themeColors, AppTranslator t) {
     return Row(
       textDirection: TextDirection.ltr,
       children: [
@@ -448,16 +584,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           height: 56,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: AppColors.greyLight.withValues(alpha: 0.3),
+            color: themeColors.border.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               '+20',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: themeColors.textPrimary,
+                fontFamily: 'Cairo',
               ),
             ),
           ),
@@ -470,29 +607,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             keyboardType: TextInputType.phone,
             textAlign: TextAlign.left,
             textDirection: TextDirection.ltr,
+            style: TextStyle(color: themeColors.textPrimary, fontFamily: 'Cairo'),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'يرجى إدخال رقم الهاتف';
+                return t.translate('invalid_phone');
               }
               if (value.trim().length != 10 && value.trim().length != 11) {
-                return 'يرجى إدخال رقم هاتف صالح من 11 رقم';
+                return t.translate('invalid_phone');
               }
               return null;
             },
             decoration: InputDecoration(
               hintText: '01X XXXX XXXX',
-              hintStyle: const TextStyle(
-                color: AppColors.textSecondary,
+              hintStyle: TextStyle(
+                color: themeColors.textSecondary,
                 fontSize: 14,
                 letterSpacing: 1.5,
+                fontFamily: 'Cairo',
               ),
               filled: true,
-              fillColor: AppColors.greyLight.withValues(alpha: 0.3),
+              fillColor: themeColors.border.withValues(alpha: 0.3),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
               ),
-              suffixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary, size: 22),
+              suffixIcon: Icon(Icons.phone_outlined, color: themeColors.textSecondary, size: 22),
               contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
             ),
           ),
@@ -501,17 +640,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  Widget _buildTrustBadge(IconData icon, String label) {
+  Widget _buildTrustBadge(IconData icon, String label, dynamic themeColors) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.textSecondary, size: 26),
+        Icon(icon, color: themeColors.textSecondary, size: 26),
         const SizedBox(height: 6),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: AppColors.textSecondary,
+            color: themeColors.textSecondary,
+            fontFamily: 'Cairo',
           ),
         ),
       ],

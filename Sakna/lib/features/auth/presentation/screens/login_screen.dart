@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import '../../../../config/theme/app_colors.dart';
+import '../../../../config/theme/theme_provider.dart';
 import '../../../../core/presentation/widgets/primary_button.dart';
+import '../../../../core/presentation/widgets/sakna_logo.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 import '../widgets/social_login_button.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
   
   @override
@@ -23,13 +26,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeColors = ref.watch(themeColorsProvider);
+    final t = ref.watch(translationProvider);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: themeColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // No back button shown in design, but we can add one if needed.
-        // leading: const BackButton(color: AppColors.textPrimary),
+        leading: BackButton(color: themeColors.textPrimary),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -37,52 +42,47 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            // Logo Container
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const Center(
-                child: Icon(Icons.add_circle_outline, color: AppColors.accent, size: 50), // Placeholder for actual logo
-              ),
+            // Brand Logo
+            const Center(
+              child: SaknaLogo(size: 80),
             ),
             const SizedBox(height: 32),
             
             // Title
-            const Text(
-              'تسجيل الدخول',
+            Text(
+              t.translate('login_title'),
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: themeColors.textPrimary,
+                fontFamily: 'Cairo',
               ),
             ),
             const SizedBox(height: 12),
             
             // Subtitle
-            const Text(
-              'أهلاً بك مجدداً، يرجى إدخال رقم هاتفك للمتابعة',
+            Text(
+              t.translate('login_subtitle'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
-                color: AppColors.textSecondary,
+                color: themeColors.textSecondary,
                 height: 1.5,
+                fontFamily: 'Cairo',
               ),
             ),
             const SizedBox(height: 40),
             
             // Phone input label
-            const Align(
-              alignment: Alignment.centerRight,
+            Align(
+              alignment: t.isArabic ? Alignment.centerRight : Alignment.centerLeft,
               child: Text(
-                'رقم الهاتف',
+                t.translate('phone'),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: themeColors.textPrimary,
+                  fontFamily: 'Cairo',
                 ),
               ),
             ),
@@ -93,22 +93,19 @@ class _LoginScreenState extends State<LoginScreen> {
               textDirection: TextDirection.ltr,
               child: IntlPhoneField(
                 controller: _phoneController,
+                style: TextStyle(color: themeColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 16),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: AppColors.greyLight.withValues(alpha: 0.3),
+                  fillColor: themeColors.border.withValues(alpha: 0.3),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
                   contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  hintStyle: TextStyle(color: themeColors.textSecondary, fontFamily: 'Cairo'),
                 ),
                 initialCountryCode: 'EG',
                 textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2,
-                ),
                 showDropdownIcon: true,
                 dropdownIconPosition: IconPosition.leading,
                 flagsButtonPadding: const EdgeInsets.only(left: 16),
@@ -121,8 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
             
             // Send Code Button
             PrimaryButton(
-              text: 'أرسل رمز التحقق',
-              icon: Icons.west, // Left pointing arrow
+              text: t.translate('send_otp'),
+              icon: t.isArabic ? Icons.west : Icons.east,
               iconFirst: false,
               onPressed: () {
                 context.push('/otp');
@@ -133,15 +130,15 @@ class _LoginScreenState extends State<LoginScreen> {
             // Divider
             Row(
               children: [
-                Expanded(child: Divider(color: AppColors.greyLight, thickness: 1)),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                Expanded(child: Divider(color: themeColors.border, thickness: 1)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'أو المتابعة عبر',
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                    t.translate('or_continue_with'),
+                    style: TextStyle(color: themeColors.textSecondary, fontSize: 14, fontFamily: 'Cairo'),
                   ),
                 ),
-                Expanded(child: Divider(color: AppColors.greyLight, thickness: 1)),
+                Expanded(child: Divider(color: themeColors.border, thickness: 1)),
               ],
             ),
             const SizedBox(height: 32),
