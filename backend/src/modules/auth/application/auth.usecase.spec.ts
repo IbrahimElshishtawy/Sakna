@@ -197,7 +197,7 @@ describe('AuthUseCase', () => {
 
       const dto = {
         name: 'أحمد محمد علي', // triple name
-        phone: '1002345678',
+        phone: '1223070571',
         country_code: '+20',
         email: 'ahmad@example.com',
         password: 'Password123',
