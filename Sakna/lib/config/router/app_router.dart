@@ -12,7 +12,7 @@ import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/services/presentation/screens/services_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/welcome',
+  initialLocation: '/home',
   routes: [
     GoRoute(
       path: '/welcome',

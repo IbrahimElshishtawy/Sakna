@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../config/theme/app_colors.dart';
+import '../../../../config/theme/theme_provider.dart';
 import '../providers/order_providers.dart';
 
 class OrderTrackingCard extends ConsumerWidget {
@@ -11,14 +11,17 @@ class OrderTrackingCard extends ConsumerWidget {
     final order = ref.watch(activeOrderProvider);
     if (order == null) return const SizedBox.shrink();
 
+    final themeColors = ref.watch(themeColorsProvider);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: themeColors.surface,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: themeColors.border, width: themeColors.isDark ? 1 : 0.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: themeColors.isDark ? 0.2 : 0.04),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -32,12 +35,12 @@ class OrderTrackingCard extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: themeColors.border.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.local_shipping,
-                  color: AppColors.primary,
+                  color: themeColors.isDark ? themeColors.accent : themeColors.primary,
                   size: 28,
                 ),
               ),
@@ -51,28 +54,33 @@ class OrderTrackingCard extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          order.description,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                            fontFamily: 'Cairo',
+                        Expanded(
+                          child: Text(
+                            order.description,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: themeColors.textPrimary,
+                              fontFamily: 'Cairo',
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         // Small gold status badge
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppColors.accent.withValues(alpha: 0.2),
+                            color: themeColors.accent.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text(
+                          child: Text(
                             'جاري التوصيل',
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+                              color: themeColors.isDark ? themeColors.accent : themeColors.primary,
                               fontFamily: 'Cairo',
                             ),
                           ),
@@ -82,9 +90,9 @@ class OrderTrackingCard extends ConsumerWidget {
                     const SizedBox(height: 6),
                     Text(
                       'وقت الوصول المتوقع: ${order.arrivalTime}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: themeColors.textSecondary,
                         fontFamily: 'Cairo',
                       ),
                     ),
@@ -94,9 +102,9 @@ class OrderTrackingCard extends ConsumerWidget {
 
               // Dismiss / Cancel order tracking visual (conditionally hides)
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.chevron_left,
-                  color: AppColors.textSecondary,
+                  color: themeColors.textSecondary,
                   size: 22,
                 ),
                 onPressed: () {
@@ -122,21 +130,21 @@ class OrderTrackingCard extends ConsumerWidget {
           // Shipping progress indicator line
           Row(
             children: [
-              const Icon(Icons.location_on, color: AppColors.accent, size: 18),
+              Icon(Icons.location_on, color: themeColors.accent, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(4),
-                  child: const LinearProgressIndicator(
+                  child: LinearProgressIndicator(
                     value: 0.6,
                     minHeight: 6,
-                    backgroundColor: AppColors.greyLight,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    backgroundColor: themeColors.border,
+                    valueColor: AlwaysStoppedAnimation<Color>(themeColors.isDark ? themeColors.accent : themeColors.primary),
                   ),
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.home_outlined, color: AppColors.textSecondary, size: 18),
+              Icon(Icons.home_outlined, color: themeColors.textSecondary, size: 18),
             ],
           ),
         ],
