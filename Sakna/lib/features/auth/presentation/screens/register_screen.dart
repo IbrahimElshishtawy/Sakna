@@ -299,15 +299,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             : const SizedBox.shrink(),
                       ),
 
-                      // Terms and Conditions and Matching message (Animated Switcher / Size)
+                      // Passwords match badge (Animated Switcher / Size)
                       AnimatedSize(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
                         child: _passwordsMatch
                             ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 16),
                                   // Passwords match badge
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -335,79 +334,81 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
-                                  // Terms and Conditions checkbox
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Transform.scale(
-                                        scale: 0.9,
-                                        child: Checkbox(
-                                          value: _agreeToTerms,
-                                          activeColor: themeColors.primary,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          onChanged: (val) {
-                                            setState(() {
-                                              _agreeToTerms = val ?? false;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(top: 10.0, left: 4.0, right: 4.0),
-                                          child: GestureDetector(
-                                            onTap: () async {
-                                              final agreed = await context.push<bool>('/terms');
-                                              if (agreed == true) {
-                                                setState(() {
-                                                  _agreeToTerms = true;
-                                                });
-                                              }
-                                            },
-                                            child: RichText(
-                                              text: TextSpan(
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: themeColors.textSecondary,
-                                                  height: 1.5,
-                                                  fontFamily: 'Cairo',
-                                                ),
-                                                children: [
-                                                  TextSpan(
-                                                    text: t.isArabic
-                                                        ? 'أوافق على '
-                                                        : 'I agree to the ',
-                                                  ),
-                                                  TextSpan(
-                                                    text: t.isArabic
-                                                        ? 'الشروط والأحكام و سياسة الخصوصية'
-                                                        : 'Terms & Conditions & Privacy Policy',
-                                                    style: TextStyle(
-                                                      color: themeColors.accent,
-                                                      fontWeight: FontWeight.bold,
-                                                      decoration: TextDecoration.underline,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: t.isArabic
-                                                        ? ' الخاصة بالمنصة.'
-                                                        : ' of the platform.',
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ],
                               )
                             : const SizedBox.shrink(),
                       ),
+
+                      const SizedBox(height: 20),
+
+                      // Terms and Conditions checkbox (Always Visible!)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Transform.scale(
+                            scale: 0.9,
+                            child: Checkbox(
+                              value: _agreeToTerms,
+                              activeColor: themeColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              onChanged: (val) {
+                                setState(() {
+                                  _agreeToTerms = val ?? false;
+                                });
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10.0, left: 4.0, right: 4.0),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  final agreed = await context.push<bool>('/terms');
+                                  if (agreed == true) {
+                                    setState(() {
+                                      _agreeToTerms = true;
+                                    });
+                                  }
+                                },
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: themeColors.textSecondary,
+                                      height: 1.5,
+                                      fontFamily: 'Cairo',
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: t.isArabic
+                                            ? 'أوافق على '
+                                            : 'I agree to the ',
+                                      ),
+                                      TextSpan(
+                                        text: t.isArabic
+                                            ? 'الشروط والأحكام و سياسة الخصوصية'
+                                            : 'Terms & Conditions & Privacy Policy',
+                                        style: TextStyle(
+                                          color: themeColors.accent,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: TextDecoration.underline,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: t.isArabic
+                                                ? ' الخاصة بالمنصة.'
+                                                : ' of the platform.',
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
 
                       if (_formError != null) ...[
                         const SizedBox(height: 12),
