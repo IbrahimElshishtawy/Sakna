@@ -19,7 +19,6 @@ import { SendOtpDto } from '../dto/send-otp.dto';
 import { VerifyOtpDto } from '../dto/verify-otp.dto';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
-import { SocialLoginDto } from '../social-login.dto'; // Wait, let's keep it in dto folder. Yes, it was saved inside src/modules/auth/dto/social-login.dto.ts. We should import it from '../dto/social-login.dto'
 import { SocialLoginDto as CorrectSocialLoginDto } from '../dto/social-login.dto';
 import { CompleteProfileDto } from '../dto/complete-profile.dto';
 import { ForgotPasswordDto } from '../dto/forgot-password.dto';
@@ -30,7 +29,8 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { FileSecurityInterceptor } from '../interceptors/file-security.interceptor';
 import { AuditInterceptor } from '../interceptors/audit.interceptor';
 import { GetUser } from '../decorators/get-user.decorator';
-import { IpAgent, IpAgentData } from '../decorators/ip-agent.decorator';
+import { IpAgent } from '../decorators/ip-agent.decorator';
+import type { IpAgentData } from '../decorators/ip-agent.decorator';
 
 @ApiTags('Authentication & Sessions')
 @Controller('api/v1/auth')

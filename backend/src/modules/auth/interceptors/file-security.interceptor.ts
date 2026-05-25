@@ -6,7 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 
 @Injectable()
 export class FileSecurityInterceptor implements NestInterceptor {
