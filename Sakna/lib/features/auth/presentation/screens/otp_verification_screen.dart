@@ -190,7 +190,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
         elevation: 0,
         centerTitle: true,
         title: const Text(
-          'KHEDMA',
+          'SAKNA',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
