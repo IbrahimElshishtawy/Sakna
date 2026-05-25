@@ -1,44 +1,53 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../config/theme/theme_provider.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 
-class EliteTechnicians extends StatelessWidget {
+class EliteTechnicians extends ConsumerWidget {
   const EliteTechnicians({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeColors = ref.watch(themeColorsProvider);
+    final t = ref.watch(translationProvider);
+
     final List<Map<String, dynamic>> technicians = [
       {
-        'name': 'م. خالد عباس',
+        'name': t.isArabic ? 'م. خالد عباس' : 'Eng. Khaled Abbas',
         'rating': '4.8',
-        'reviews': '124 تقييم',
-        'bio': 'خبير صيانة كهربائية منذ 10 سنوات',
-        'price': '50 ر.س',
+        'reviews': t.isArabic ? '124 تقييم' : '124 reviews',
+        'bio': t.isArabic ? 'خبير صيانة كهربائية منذ 10 سنوات' : 'Electrical maintenance expert for 10 years',
+        'price': t.isArabic ? '50 ر.س' : '50 SAR',
       },
       {
-        'name': 'أ. عماد السعدني',
+        'name': t.isArabic ? 'أ. عماد السعدني' : 'Mr. Emad El-Saadany',
         'rating': '4.9',
-        'reviews': '98 تقييم',
-        'bio': 'فني سباكة وتركيبات متكاملة',
-        'price': '75 ر.s',
+        'reviews': t.isArabic ? '98 تقييم' : '98 reviews',
+        'bio': t.isArabic ? 'فني سباكة وتركيبات متكاملة' : 'Plumbing and integration technician',
+        'price': t.isArabic ? '75 ر.س' : '75 SAR',
       }
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'نخبة الفنيين',
+              t.isArabic ? 'نخبة الفنيين' : 'Elite Technicians',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: themeColors.textPrimary,
                 fontFamily: 'Cairo',
               ),
             ),
-            Icon(Icons.arrow_forward_ios, color: AppColors.textSecondary, size: 16),
+            Icon(
+              t.isArabic ? Icons.chevron_left : Icons.chevron_right,
+              color: themeColors.textSecondary,
+              size: 22,
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -47,18 +56,20 @@ class EliteTechnicians extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: technicians.length,
+            padding: const EdgeInsets.only(right: 8.0, left: 8.0),
             itemBuilder: (context, index) {
               final tech = technicians[index];
               return Container(
                 width: 280,
-                margin: const EdgeInsets.only(left: 16.0),
+                margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: themeColors.surface,
                   borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: themeColors.border, width: themeColors.isDark ? 1 : 0.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: Colors.black.withValues(alpha: themeColors.isDark ? 0.15 : 0.02),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -75,19 +86,23 @@ class EliteTechnicians extends StatelessWidget {
                           height: 64,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColors.greyLight.withValues(alpha: 0.3),
+                            color: themeColors.border.withValues(alpha: 0.3),
                           ),
-                          child: const Center(
-                            child: Icon(Icons.person, color: AppColors.primary, size: 36),
+                          child: Center(
+                            child: Icon(
+                              Icons.person,
+                              color: themeColors.isDark ? themeColors.accent : themeColors.primary,
+                              size: 36,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           tech['price'],
-                          style: const TextStyle(
-                            fontSize: 15,
+                          style: TextStyle(
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                            color: themeColors.isDark ? themeColors.accent : themeColors.primary,
                             fontFamily: 'Cairo',
                           ),
                         ),
@@ -103,10 +118,10 @@ class EliteTechnicians extends StatelessWidget {
                         children: [
                           Text(
                             tech['name'],
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: themeColors.textPrimary,
                               fontFamily: 'Cairo',
                             ),
                           ),
@@ -117,9 +132,9 @@ class EliteTechnicians extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 '${tech['rating']} (${tech['reviews']})',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
-                                  color: AppColors.textSecondary,
+                                  color: themeColors.textSecondary,
                                   fontFamily: 'Cairo',
                                 ),
                               ),
@@ -130,9 +145,9 @@ class EliteTechnicians extends StatelessWidget {
                             tech['bio'],
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11,
-                              color: AppColors.textSecondary,
+                              color: themeColors.textSecondary,
                               height: 1.4,
                               fontFamily: 'Cairo',
                             ),
@@ -143,19 +158,19 @@ class EliteTechnicians extends StatelessWidget {
                             height: 34,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
+                                backgroundColor: themeColors.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 padding: EdgeInsets.zero,
                               ),
                               onPressed: () {},
-                              child: const Text(
-                                'حجز الآن',
+                              child: Text(
+                                t.isArabic ? 'احجز الآن' : 'Book Now',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: themeColors.isDark ? themeColors.accent : Colors.white,
                                   fontFamily: 'Cairo',
                                 ),
                               ),

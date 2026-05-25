@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 
-class EmergencyBanner extends StatelessWidget {
+class EmergencyBanner extends ConsumerWidget {
   const EmergencyBanner({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = ref.watch(translationProvider);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFC62828), // High-fidelity dark red container matching screenshot
+        color: const Color(0xFFC62828), // Premium high-contrast safety red representing urgency
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -38,22 +42,22 @@ class EmergencyBanner extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'طلب طوارئ؟',
-                    style: TextStyle(
+                    t.isArabic ? 'طلب طوارئ؟' : 'Emergency Request?',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontFamily: 'Cairo',
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'وصول في أقل من 30 دقيقة',
-                    style: TextStyle(
+                    t.isArabic ? 'وصول في أقل من 30 دقيقة' : 'Arrival in less than 30 mins',
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.white70,
                       fontFamily: 'Cairo',
@@ -64,7 +68,7 @@ class EmergencyBanner extends StatelessWidget {
             ],
           ),
           
-          // Action arrow button
+          // Action arrow button (directional compatibility)
           Container(
             width: 40,
             height: 40,
@@ -73,7 +77,11 @@ class EmergencyBanner extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+              icon: Icon(
+                t.isArabic ? Icons.arrow_back : Icons.arrow_forward,
+                color: Colors.white,
+                size: 18,
+              ),
               onPressed: () {},
             ),
           ),

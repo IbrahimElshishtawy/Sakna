@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../config/theme/theme_provider.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 
-class QuickActionsRow extends StatelessWidget {
+class QuickActionsRow extends ConsumerWidget {
   const QuickActionsRow({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeColors = ref.watch(themeColorsProvider);
+    final t = ref.watch(translationProvider);
+
     final List<Map<String, dynamic>> items = [
-      {'icon': Icons.history, 'label': 'السجلات'},
-      {'icon': Icons.account_balance_wallet_outlined, 'label': 'المحفظة'},
-      {'icon': Icons.home_work_outlined, 'label': 'الدعم'},
-      {'icon': Icons.apps, 'label': 'المزيد'},
+      {'icon': Icons.history, 'label': t.isArabic ? 'السجلات' : 'History'},
+      {'icon': Icons.account_balance_wallet_outlined, 'label': t.isArabic ? 'المحفظة' : 'Wallet'},
+      {'icon': Icons.home_work_outlined, 'label': t.isArabic ? 'الدعم' : 'Support'},
+      {'icon': Icons.apps, 'label': t.isArabic ? 'المزيد' : 'More'},
     ];
 
     return Row(
@@ -23,25 +28,30 @@ class QuickActionsRow extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: themeColors.surface,
                   borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: themeColors.border, width: themeColors.isDark ? 1 : 0.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: Colors.black.withValues(alpha: themeColors.isDark ? 0.15 : 0.02),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Icon(item['icon'], color: AppColors.primary, size: 26),
+                child: Icon(
+                  item['icon'],
+                  color: themeColors.isDark ? themeColors.accent : themeColors.primary,
+                  size: 26,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 item['label'],
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: themeColors.textPrimary,
                   fontFamily: 'Cairo',
                 ),
               ),
