@@ -117,8 +117,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
               child: Column(
                 children: [
-                  // Gold Logo container
-                  Container(
+                  // Brand Logo
                   const Center(
                     child: SaknaLogo(size: 76),
                   ),
