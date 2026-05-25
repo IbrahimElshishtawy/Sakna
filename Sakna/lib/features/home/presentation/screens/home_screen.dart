@@ -35,7 +35,7 @@ class HomeScreen extends ConsumerWidget {
                 padding: const EdgeInsets.only(
                   left: 7.0,
                   right: 7.0,
-                  top: 5.0,
+                  top: 7.0,
                   bottom: 110.0,
                 ), // bottom padded for floating navbar
                 child: Column(

@@ -28,21 +28,37 @@ class QuickActionsRow extends ConsumerWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: themeColors.surface,
+                  gradient: LinearGradient(
+                    colors: themeColors.isDark
+                        ? [const Color(0xFF0A1E3F), const Color(0xFF051630)]
+                        : [Colors.white, const Color(0xFFF9FAFB)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: themeColors.border, width: themeColors.isDark ? 1 : 0.5),
+                  border: Border.all(
+                    color: themeColors.isDark
+                        ? themeColors.accent.withValues(alpha: 0.35)
+                        : themeColors.border.withValues(alpha: 0.6),
+                    width: themeColors.isDark ? 1.5 : 1.0,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: themeColors.isDark ? 0.15 : 0.02),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      color: themeColors.isDark
+                          ? themeColors.accent.withValues(alpha: 0.08)
+                          : Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 12,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: Icon(
-                  item['icon'],
-                  color: themeColors.isDark ? themeColors.accent : themeColors.primary,
-                  size: 26,
+                child: Center(
+                  child: Icon(
+                    item['icon'],
+                    color: themeColors.isDark ? themeColors.accent : themeColors.primary,
+                    size: 26,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -50,7 +66,7 @@ class QuickActionsRow extends ConsumerWidget {
                 item['label'],
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                   color: themeColors.textPrimary,
                   fontFamily: 'Cairo',
                 ),
