@@ -358,13 +358,46 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                       Expanded(
                                         child: Padding(
                                           padding: const EdgeInsets.only(top: 10.0, left: 4.0, right: 4.0),
-                                          child: Text(
-                                            t.translate('agree_terms'),
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: themeColors.textSecondary,
-                                              height: 1.5,
-                                              fontFamily: 'Cairo',
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              final agreed = await context.push<bool>('/terms');
+                                              if (agreed == true) {
+                                                setState(() {
+                                                  _agreeToTerms = true;
+                                                });
+                                              }
+                                            },
+                                            child: RichText(
+                                              text: TextSpan(
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: themeColors.textSecondary,
+                                                  height: 1.5,
+                                                  fontFamily: 'Cairo',
+                                                ),
+                                                children: [
+                                                  TextSpan(
+                                                    text: t.isArabic
+                                                        ? 'أوافق على '
+                                                        : 'I agree to the ',
+                                                  ),
+                                                  TextSpan(
+                                                    text: t.isArabic
+                                                        ? 'الشروط والأحكام و سياسة الخصوصية'
+                                                        : 'Terms & Conditions & Privacy Policy',
+                                                    style: TextStyle(
+                                                      color: themeColors.accent,
+                                                      fontWeight: FontWeight.bold,
+                                                      decoration: TextDecoration.underline,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: t.isArabic
+                                                        ? ' الخاصة بالمنصة.'
+                                                        : ' of the platform.',
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
