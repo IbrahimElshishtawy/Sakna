@@ -36,7 +36,7 @@ class HomeScreen extends ConsumerWidget {
                   left: 7.0,
                   right: 7.0,
                   top: 5.0,
-                  bottom: 30.0,
+                  bottom: 110.0,
                 ), // bottom padded for floating navbar
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

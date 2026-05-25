@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -52,12 +53,9 @@ class MainShellScreen extends ConsumerWidget {
       backgroundColor: themeColors.background,
       body: Stack(
         children: [
-          // 1. The Scrollable Page Content (extends to the very bottom, but padded so navbar doesn't block lists)
+          // 1. The Scrollable Page Content (extends to the very bottom, permitting scrolling under the floating navbar)
           Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 96.0),
-              child: child,
-            ),
+            child: child,
           ),
 
           // 2. The Truly Floating, Space-Hovering Bottom Navigation Bar
@@ -69,72 +67,83 @@ class MainShellScreen extends ConsumerWidget {
                 child: Container(
                   height: 72,
                   decoration: BoxDecoration(
-                    color: themeColors.surface.withValues(alpha: themeColors.isDark ? 0.90 : 0.94),
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: themeColors.border.withValues(alpha: 0.8),
-                      width: 1.5,
-                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: themeColors.isDark ? 0.4 : 0.12),
-                        blurRadius: 30,
+                        color: Colors.black.withValues(alpha: themeColors.isDark ? 0.35 : 0.08),
+                        blurRadius: 25,
                         spreadRadius: 1,
-                        offset: const Offset(0, 10),
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildNavItem(
-                          context,
-                          themeColors,
-                          index: 0,
-                          icon: Icons.home_filled,
-                          inactiveIcon: Icons.home_outlined,
-                          label: t.translate('home'),
-                          isSelected: currentIndex == 0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: themeColors.surface.withValues(alpha: themeColors.isDark ? 0.65 : 0.75),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: themeColors.border.withValues(alpha: 0.3),
+                            width: 1.5,
+                          ),
                         ),
-                        _buildNavItem(
-                          context,
-                          themeColors,
-                          index: 1,
-                          icon: Icons.calendar_month,
-                          inactiveIcon: Icons.calendar_month_outlined,
-                          label: t.translate('bookings'),
-                          isSelected: currentIndex == 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildNavItem(
+                                context,
+                                themeColors,
+                                index: 0,
+                                icon: Icons.home_filled,
+                                inactiveIcon: Icons.home_outlined,
+                                label: t.translate('home'),
+                                isSelected: currentIndex == 0,
+                              ),
+                              _buildNavItem(
+                                context,
+                                themeColors,
+                                index: 1,
+                                icon: Icons.calendar_month,
+                                inactiveIcon: Icons.calendar_month_outlined,
+                                label: t.translate('bookings'),
+                                isSelected: currentIndex == 1,
+                              ),
+                              _buildNavItem(
+                                context,
+                                themeColors,
+                                index: 2,
+                                icon: Icons.search,
+                                inactiveIcon: Icons.search,
+                                label: t.translate('search'),
+                                isSelected: currentIndex == 2,
+                              ),
+                              _buildNavItem(
+                                context,
+                                themeColors,
+                                index: 3,
+                                icon: Icons.grid_view_rounded,
+                                inactiveIcon: Icons.grid_view_outlined,
+                                label: t.translate('services'),
+                                isSelected: currentIndex == 3,
+                              ),
+                              _buildNavItem(
+                                context,
+                                themeColors,
+                                index: 4,
+                                icon: Icons.person,
+                                inactiveIcon: Icons.person_outline,
+                                label: t.translate('profile'),
+                                isSelected: currentIndex == 4,
+                              ),
+                            ],
+                          ),
                         ),
-                        _buildNavItem(
-                          context,
-                          themeColors,
-                          index: 2,
-                          icon: Icons.search,
-                          inactiveIcon: Icons.search,
-                          label: t.translate('search'),
-                          isSelected: currentIndex == 2,
-                        ),
-                        _buildNavItem(
-                          context,
-                          themeColors,
-                          index: 3,
-                          icon: Icons.grid_view_rounded,
-                          inactiveIcon: Icons.grid_view_outlined,
-                          label: t.translate('services'),
-                          isSelected: currentIndex == 3,
-                        ),
-                        _buildNavItem(
-                          context,
-                          themeColors,
-                          index: 4,
-                          icon: Icons.person,
-                          inactiveIcon: Icons.person_outline,
-                          label: t.translate('profile'),
-                          isSelected: currentIndex == 4,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -170,11 +179,33 @@ class MainShellScreen extends ConsumerWidget {
             AnimatedScale(
               scale: isSelected ? 1.15 : 1.0,
               duration: const Duration(milliseconds: 200),
-              child: Icon(
-                isSelected ? icon : inactiveIcon,
-                color: isSelected ? activeColor : inactiveColor,
-                size: 24,
-              ),
+              child: index == 4
+                  ? Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isSelected 
+                            ? activeColor.withValues(alpha: 0.2) 
+                            : inactiveColor.withValues(alpha: 0.1),
+                        border: Border.all(
+                          color: isSelected ? activeColor : inactiveColor,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.person,
+                          size: 15,
+                          color: isSelected ? activeColor : inactiveColor,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      isSelected ? icon : inactiveIcon,
+                      color: isSelected ? activeColor : inactiveColor,
+                      size: 24,
+                    ),
             ),
             const SizedBox(height: 4),
             Text(

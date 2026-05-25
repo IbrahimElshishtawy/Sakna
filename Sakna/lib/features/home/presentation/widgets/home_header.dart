@@ -25,7 +25,7 @@ class HomeHeader extends ConsumerWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: themeColors.accent.withOpacity(0.15),
+                  color: themeColors.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: themeColors.accent, width: 1.5),
                 ),

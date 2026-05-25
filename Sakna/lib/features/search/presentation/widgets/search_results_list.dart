@@ -44,7 +44,12 @@ class SearchResultsList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 16,
+        bottom: 110,
+      ),
       itemCount: results.length,
       itemBuilder: (context, index) {
         final item = results[index];
