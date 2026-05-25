@@ -443,7 +443,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       // Footer Login link
                       Center(
                         child: GestureDetector(
-                          onTap: () => context.go('/login'),
+                          onTap: () => context.push('/login'),
                           child: RichText(
                             text: TextSpan(
                               style: const TextStyle(
