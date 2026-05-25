@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../config/theme/app_colors.dart';
+import '../../../../config/theme/theme_provider.dart';
 import '../../../../core/presentation/widgets/primary_button.dart';
 import '../../../../core/presentation/widgets/sakna_logo.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeColors = ref.watch(themeColorsProvider);
+    final t = ref.watch(translationProvider);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -20,15 +25,15 @@ class WelcomeScreen extends StatelessWidget {
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Container(
-                  color: AppColors.primary,
-                  child: const Center(
-                    child: CircularProgressIndicator(color: AppColors.accent),
+                  color: themeColors.primary,
+                  child: Center(
+                    child: CircularProgressIndicator(color: themeColors.accent),
                   ),
                 );
               },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  color: AppColors.primary,
+                  color: themeColors.primary,
                   child: const Center(
                     child: Icon(
                       Icons.image_not_supported,
@@ -47,12 +52,12 @@ class WelcomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.primary.withValues(alpha: 0.9),
+                    themeColors.primary.withValues(alpha: 0.95),
                     Colors.transparent,
                   ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  stops: const [0.0, 0.6],
+                  stops: const [0.0, 0.65],
                 ),
               ),
             ),
@@ -67,15 +72,66 @@ class WelcomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // App Logo (Top Left)
-                  const SaknaLogo(size: 60),
+                  // App Logo & Floating Toggles in a clean top header Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SaknaLogo(size: 60),
+                      Row(
+                        children: [
+                          // Language Toggle
+                          GestureDetector(
+                            onTap: () {
+                              ref.read(localeProvider.notifier).toggleLocale();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.black38,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: themeColors.accent, width: 1.5),
+                              ),
+                              child: Text(
+                                t.isArabic ? 'EN' : 'عربي',
+                                style: TextStyle(
+                                  color: themeColors.accent,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Cairo',
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          // Theme Toggle Button
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black38,
+                              border: Border.all(color: themeColors.accent, width: 1.5),
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                themeColors.isDark ? Icons.wb_sunny : Icons.nightlight_round,
+                                color: themeColors.accent,
+                                size: 18,
+                              ),
+                              onPressed: () {
+                                ref.read(themeModeProvider.notifier).toggleTheme();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
 
                   const Spacer(),
 
                   // Text Content
-                  const Text(
-                    'مرحباً بك في خدمة سكنى',
-                    style: TextStyle(
+                  Text(
+                    t.translate('welcome_title'),
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -83,21 +139,22 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'نخبة من الفنيين والكوادر الطبية في خدمتك بلمسة واحدة.',
-                    style: TextStyle(
+                  Text(
+                    t.translate('welcome_subtitle'),
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
                       height: 1.5,
+                      fontFamily: 'Cairo',
                     ),
                   ),
                   const SizedBox(height: 40),
 
                   // Login Button
                   PrimaryButton(
-                    text: 'تسجيل الدخول',
-                    color: AppColors.accent,
-                    textColor: AppColors.primary,
+                    text: t.translate('login'),
+                    color: themeColors.accent,
+                    textColor: themeColors.primary,
                     onPressed: () {
                       context.push('/login');
                     },
@@ -106,7 +163,7 @@ class WelcomeScreen extends StatelessWidget {
 
                   // Create Account Button
                   PrimaryButton(
-                    text: 'إنشاء حساب جديد',
+                    text: t.translate('create_account'),
                     isOutline: true,
                     borderColor: Colors.white,
                     textColor: Colors.white,

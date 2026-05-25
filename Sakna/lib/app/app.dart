@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/router/app_router.dart';
-import '../config/theme/app_colors.dart';
+import '../config/theme/app_theme.dart';
+import '../config/theme/theme_provider.dart';
+import '../features/localization/presentation/providers/localization_providers.dart';
 
-class SakanaApp extends StatelessWidget {
+class SakanaApp extends ConsumerWidget {
   const SakanaApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeColors = ref.watch(themeColorsProvider);
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp.router(
       title: 'Sakana',
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
-      theme: ThemeData(
-        primaryColor: AppColors.primary,
-        scaffoldBackgroundColor: AppColors.background,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-          primary: AppColors.primary,
-          secondary: AppColors.accent,
-        ),
-        fontFamily: 'Cairo', // Using Cairo or similar Arabic font
-        useMaterial3: true,
-      ),
+      theme: AppTheme.buildTheme(themeColors),
       // RTL Support for Arabic
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -33,7 +29,7 @@ class SakanaApp extends StatelessWidget {
         Locale('ar', 'AE'), // Arabic
         Locale('en', 'US'), // English
       ],
-      locale: const Locale('ar', 'AE'), // Default to Arabic
+      locale: locale,
     );
   }
 }
