@@ -21,7 +21,9 @@ class AppTranslations {
       'home': 'الرئيسية',
       'services': 'الخدمات',
       'chat': 'الدردشة',
-      'profile': 'الحساب',
+      'profile': 'حسابي',
+      'bookings': 'الحجوزات',
+      'search': 'البحث',
       
       // Category translations
       'cat_maintenance': 'الصيانة',
@@ -115,6 +117,8 @@ class AppTranslations {
       'services': 'Services',
       'chat': 'Chat',
       'profile': 'Profile',
+      'bookings': 'Bookings',
+      'search': 'Search',
       
       // Category translations
       'cat_maintenance': 'Maintenance',
