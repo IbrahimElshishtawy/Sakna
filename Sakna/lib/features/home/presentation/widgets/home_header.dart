@@ -59,7 +59,7 @@ class HomeHeader extends StatelessWidget {
           
           // Brand Centered
           const Text(
-            'KHEDMA',
+            'SAKNA',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

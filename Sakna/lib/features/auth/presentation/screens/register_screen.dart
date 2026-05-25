@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/presentation/widgets/primary_button.dart';
+import '../../../../core/presentation/widgets/sakna_logo.dart';
 import '../providers/auth_providers.dart';
 import '../states/auth_state.dart';
 
@@ -118,35 +119,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 children: [
                   // Gold Logo container
                   Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.accent.withValues(alpha: 0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.shield_outlined,
-                        color: AppColors.primary,
-                        size: 38,
-                      ),
-                    ),
+                  const Center(
+                    child: SaknaLogo(size: 76),
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'KHEDMA',
+                    'SAKNA',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       letterSpacing: 2,
+                      fontFamily: 'Cairo',
                     ),
                   ),
                   const SizedBox(height: 4),

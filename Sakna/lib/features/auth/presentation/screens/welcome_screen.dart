@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/presentation/widgets/primary_button.dart';
+import '../../../../core/presentation/widgets/sakna_logo.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -29,13 +30,17 @@ class WelcomeScreen extends StatelessWidget {
                 return Container(
                   color: AppColors.primary,
                   child: const Center(
-                    child: Icon(Icons.image_not_supported, color: Colors.white, size: 50),
+                    child: Icon(
+                      Icons.image_not_supported,
+                      color: Colors.white,
+                      size: 50,
+                    ),
                   ),
                 );
               },
             ),
           ),
-          
+
           // Gradient Overlay to make text readable
           Positioned.fill(
             child: Container(
@@ -55,35 +60,26 @@ class WelcomeScreen extends StatelessWidget {
 
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 24.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // App Logo (Top Left)
-                  Image.asset(
-                    'assets/icons/iconApp.png',
-                    width: 60,
-                    height: 60,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.add, color: AppColors.accent, size: 30),
-                    ),
-                  ),
-                  
+                  const SaknaLogo(size: 60),
+
                   const Spacer(),
-                  
+
                   // Text Content
                   const Text(
-                    'مرحباً بك في خدمة',
+                    'مرحباً بك في خدمة سكنى',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
+                      fontFamily: 'Cairo',
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -96,7 +92,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  
+
                   // Login Button
                   PrimaryButton(
                     text: 'تسجيل الدخول',
@@ -107,7 +103,7 @@ class WelcomeScreen extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Create Account Button
                   PrimaryButton(
                     text: 'إنشاء حساب جديد',
