@@ -1,7 +1,8 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { IAuthRepository, AUTH_REPOSITORY } from '../domain/auth.repository.interface';
+import type { IAuthRepository } from '../domain/auth.repository.interface';
+import { AUTH_REPOSITORY } from '../domain/auth.repository.interface';
 import { UserEntity } from '../domain/user.entity';
 import { OtpEntity } from '../domain/otp.entity';
 import { SendOtpDto } from './dto/send-otp.dto';

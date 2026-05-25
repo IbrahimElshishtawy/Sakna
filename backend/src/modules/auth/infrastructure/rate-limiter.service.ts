@@ -1,5 +1,6 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
-import { IAuthRepository, AUTH_REPOSITORY } from '../domain/auth.repository.interface';
+import type { IAuthRepository } from '../domain/auth.repository.interface';
+import { AUTH_REPOSITORY } from '../domain/auth.repository.interface';
 
 @Injectable()
 export class RateLimiterService {
