@@ -147,8 +147,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Row(
               children: [
                 SocialLoginButton(
-                  label: 'Apple',
-                  fallbackIcon: Icons.apple,
+                  label: 'Facebook',
+                  fallbackIcon: Icons.facebook,
                   onPressed: () {},
                 ),
                 const SizedBox(width: 16),
