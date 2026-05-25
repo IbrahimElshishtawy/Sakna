@@ -1,11 +1,11 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '../../infrastructure/jwt.service';
+import { SessionService } from '../services/session.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly sessionService: SessionService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers['authorization'];
 
@@ -19,12 +19,18 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     const token = parts[1];
-    try {
-      const decoded = this.jwtService.verifyAccessToken(token);
-      request.user = decoded; // Bind the decoded token payload to the request
-      return true;
-    } catch {
-      throw new UnauthorizedException('Invalid or expired access token');
-    }
+    
+    // Verifies token signature, lifetime, Redis blacklist and active DB session
+    const payload = await this.sessionService.verifyAccessToken(token);
+    
+    // Attach user information to request
+    request.user = {
+      userId: payload.sub,
+      role: payload.role,
+      sessionId: payload.session_id,
+      tokenVersion: payload.token_version,
+    };
+
+    return true;
   }
 }
