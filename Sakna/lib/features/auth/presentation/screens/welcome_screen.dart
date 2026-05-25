@@ -13,9 +13,18 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           // Background Image
           Positioned.fill(
-            child: Image.asset(
-              'assets/images/welcome_bg.png', // Placeholder for actual background
+            child: Image.network(
+              'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
               fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  color: AppColors.primary,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: AppColors.accent),
+                  ),
+                );
+              },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   color: AppColors.primary,
