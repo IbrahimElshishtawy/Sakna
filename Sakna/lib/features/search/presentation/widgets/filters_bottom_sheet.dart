@@ -21,7 +21,6 @@ class _FiltersBottomSheetState extends ConsumerState<FiltersBottomSheet> {
   Widget build(BuildContext context) {
     final themeColors = ref.watch(themeColorsProvider);
     final t = ref.watch(translationProvider);
-    final isAr = t.isArabic;
 
     final primaryActionColor = themeColors.isDark ? themeColors.accent : themeColors.primary;
     final primaryTextColor = themeColors.isDark ? Colors.black : Colors.white;

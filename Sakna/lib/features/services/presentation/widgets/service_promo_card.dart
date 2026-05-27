@@ -8,7 +8,7 @@ class ServicePromoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 160,
+      constraints: const BoxConstraints(minHeight: 160),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
