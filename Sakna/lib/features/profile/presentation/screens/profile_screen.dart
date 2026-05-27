@@ -192,7 +192,7 @@ class ProfileScreen extends ConsumerWidget {
                     Colors.white.withValues(alpha: 0.04),
                     BlendMode.dstATop,
                   ),
-                  onError: (_, __) {}, // Gracefully handle missing asset
+                  onError: (exception, stackTrace) {}, // Gracefully handle missing asset
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -642,7 +642,7 @@ class ProfileScreen extends ConsumerWidget {
             backgroundColor: themeColors.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(
+              side: BorderSide(
                 color: themeColors.border,
                 width: 1,
               ),

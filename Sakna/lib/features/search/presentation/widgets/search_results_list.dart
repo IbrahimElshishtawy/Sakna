@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../config/theme/theme_provider.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 import 'tech_result_card.dart';
 import 'service_result_card.dart';
 
-class SearchResultsList extends StatelessWidget {
+class SearchResultsList extends ConsumerWidget {
   final List<Map<String, dynamic>> results;
 
   const SearchResultsList({
@@ -12,30 +14,41 @@ class SearchResultsList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeColors = ref.watch(themeColorsProvider);
+    final t = ref.watch(translationProvider);
+
     if (results.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off_outlined, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.4)),
+            Icon(
+              Icons.search_off_outlined,
+              size: 64,
+              color: themeColors.textSecondary.withValues(alpha: 0.4),
+            ),
             const SizedBox(height: 16),
-            const Text(
-              'لا توجد نتائج مطابقة لبحثك',
+            Text(
+              t.translate('no_results_title'),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textSecondary,
+                color: themeColors.textSecondary,
                 fontFamily: 'Cairo',
               ),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'تأكد من كتابة الكلمة بشكل صحيح أو جرب كلمات أخرى',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.textSecondary,
-                fontFamily: 'Cairo',
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: Text(
+                t.translate('no_results_subtitle'),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: themeColors.textSecondary,
+                  fontFamily: 'Cairo',
+                ),
               ),
             ),
           ],

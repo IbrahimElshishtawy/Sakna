@@ -105,6 +105,24 @@ class AppTranslations {
       'appearance': 'المظهر والوضع',
       'language': 'لغة التطبيق',
       'egp': 'ج.م',
+
+      // Search Screen Keys
+      'recent_search': 'البحث الأخير',
+      'clear_all': 'مسح الكل',
+      'popular_services': 'خدمات شائعة',
+      'smart_suggestions': 'اقتراحات ذكية',
+      'no_results_title': 'لا توجد نتائج مطابقة لبحثك',
+      'no_results_subtitle': 'تأكد من كتابة الكلمة بشكل صحيح أو جرب كلمات أخرى',
+      'ac_repair': 'تصليح تكييف',
+      'home_injection': 'حقنة منزلية',
+      'plumber_shater': 'سباك شاطر',
+      'deep_clean_short': 'تنظيف عميق',
+      'specialized_nursing': 'تمريض منزلي متخصص',
+      'medical_dept_today': 'قسم الخدمات الطبية • متاح اليوم',
+      'electrical_setup': 'تأسيس كهرباء وصيانة أعطال',
+      'maintenance_dept': 'قسم الصيانة المنزلية',
+      'landscaping': 'تنسيق حدائق خارجية',
+      'facilities_care_dept': 'قسم العناية بالمرافق',
     },
     'en': {
       'welcome_title': 'Welcome to Sakna Service',
@@ -211,6 +229,24 @@ class AppTranslations {
       'appearance': 'Appearance & Theme',
       'language': 'App Language',
       'egp': 'EGP',
+
+      // Search Screen Keys
+      'recent_search': 'Recent Searches',
+      'clear_all': 'Clear All',
+      'popular_services': 'Popular Services',
+      'smart_suggestions': 'Smart Suggestions',
+      'no_results_title': 'No matching results found',
+      'no_results_subtitle': 'Double-check spelling or try searching other keywords',
+      'ac_repair': 'AC Repair',
+      'home_injection': 'Home Injection',
+      'plumber_shater': 'Professional Plumber',
+      'deep_clean_short': 'Deep Cleaning',
+      'specialized_nursing': 'Specialized Home Nursing',
+      'medical_dept_today': 'Medical Services • Available Today',
+      'electrical_setup': 'Electrical Setup & Maintenance',
+      'maintenance_dept': 'Home Maintenance Department',
+      'landscaping': 'External Landscaping',
+      'facilities_care_dept': 'Facilities Care Department',
     }
   };
 

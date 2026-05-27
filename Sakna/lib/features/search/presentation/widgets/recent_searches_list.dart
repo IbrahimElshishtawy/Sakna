@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../config/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../config/theme/theme_provider.dart';
+import '../../../localization/presentation/providers/localization_providers.dart';
 
-class RecentSearchesList extends StatelessWidget {
+class RecentSearchesList extends ConsumerWidget {
   final List<String> history;
   final VoidCallback onClearAll;
   final Function(String) onTapItem;
@@ -14,8 +16,12 @@ class RecentSearchesList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (history.isEmpty) return const SizedBox.shrink();
+
+    final themeColors = ref.watch(themeColorsProvider);
+    final t = ref.watch(translationProvider);
+    final isAr = t.isArabic;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,21 +29,21 @@ class RecentSearchesList extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'البحث الأخير',
+            Text(
+              t.translate('recent_search'),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: themeColors.textPrimary,
                 fontFamily: 'Cairo',
               ),
             ),
             TextButton(
               onPressed: onClearAll,
-              child: const Text(
-                'مسح الكل',
+              child: Text(
+                t.translate('clear_all'),
                 style: TextStyle(
-                  color: AppColors.accent,
+                  color: themeColors.accent,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Cairo',
                 ),
@@ -50,15 +56,15 @@ class RecentSearchesList extends StatelessWidget {
           children: history.map((search) {
             return ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.history, color: AppColors.textSecondary, size: 20),
+              leading: Icon(Icons.history, color: themeColors.textSecondary, size: 20),
               title: Align(
-                alignment: Alignment.centerRight,
+                alignment: isAr ? Alignment.centerRight : Alignment.centerLeft,
                 child: Text(
                   search,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: themeColors.textPrimary,
                     fontFamily: 'Cairo',
                   ),
                 ),
