@@ -10,6 +10,7 @@ import '../../features/home/presentation/screens/main_shell_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/services/presentation/screens/services_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/home',
@@ -60,7 +61,7 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: '/profile',
-          builder: (context, state) => const _PlaceholderScreen(title: 'حسابي'),
+          builder: (context, state) => const ProfileScreen(),
         ),
       ],
     ),

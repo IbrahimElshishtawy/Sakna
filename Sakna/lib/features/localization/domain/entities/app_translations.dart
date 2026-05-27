@@ -94,6 +94,17 @@ class AppTranslations {
       'terms_header': 'اتفاقية الاستخدام لمستخدمي سكنى',
       'terms_intro': 'مرحباً بك في سكنى. يرجى قراءة الشروط والأحكام التالية بعناية قبل استخدام التطبيق والمنصة.',
       'terms_read_agree': 'لقد قرأت الشروط والأحكام وأوافق عليها بالكامل',
+
+      // Profile Screen Keys
+      'member_tier': 'عضو سكنى البلاتيني',
+      'wallet_balance': 'رصيد المحفظة',
+      'saved_addresses': 'العناوين المحفوظة',
+      'support': 'الدعم الفني والشكاوى',
+      'logout': 'تسجيل الخروج',
+      'settings': 'الإعدادات واللغة',
+      'appearance': 'المظهر والوضع',
+      'language': 'لغة التطبيق',
+      'egp': 'ج.م',
     },
     'en': {
       'welcome_title': 'Welcome to Sakna Service',
@@ -189,6 +200,17 @@ class AppTranslations {
       'terms_header': 'Sakna Platform Terms of Use',
       'terms_intro': 'Welcome to Sakna. Please read the following Terms & Conditions carefully before using our platform.',
       'terms_read_agree': 'I have read and fully agree to the Terms & Conditions',
+
+      // Profile Screen Keys
+      'member_tier': 'Sakna Platinum Member',
+      'wallet_balance': 'Wallet Balance',
+      'saved_addresses': 'Saved Addresses',
+      'support': 'Help & Support',
+      'logout': 'Log Out',
+      'settings': 'Settings & Language',
+      'appearance': 'Appearance & Theme',
+      'language': 'App Language',
+      'egp': 'EGP',
     }
   };
 
