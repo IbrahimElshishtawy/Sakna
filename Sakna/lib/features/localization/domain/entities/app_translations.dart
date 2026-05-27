@@ -109,7 +109,6 @@ class AppTranslations {
       // Search Screen Keys
       'recent_search': 'البحث الأخير',
       'clear_all': 'مسح الكل',
-      'popular_services': 'خدمات شائعة',
       'smart_suggestions': 'اقتراحات ذكية',
       'no_results_title': 'لا توجد نتائج مطابقة لبحثك',
       'no_results_subtitle': 'تأكد من كتابة الكلمة بشكل صحيح أو جرب كلمات أخرى',
@@ -123,6 +122,16 @@ class AppTranslations {
       'maintenance_dept': 'قسم الصيانة المنزلية',
       'landscaping': 'تنسيق حدائق خارجية',
       'facilities_care_dept': 'قسم العناية بالمرافق',
+
+      // Filter Sheet Keys
+      'filters': 'الفلاتر',
+      'sort_by': 'ترتيب حسب',
+      'price_low_to_high': 'السعر (من الأقل للأعلى)',
+      'highest_rated': 'الأعلى تقييماً',
+      'price_range': 'نطاق السعر',
+      'all': 'الكل',
+      'apply_filters': 'تطبيق الفلاتر',
+      'km': 'كم',
     },
     'en': {
       'welcome_title': 'Welcome to Sakna Service',
@@ -233,7 +242,6 @@ class AppTranslations {
       // Search Screen Keys
       'recent_search': 'Recent Searches',
       'clear_all': 'Clear All',
-      'popular_services': 'Popular Services',
       'smart_suggestions': 'Smart Suggestions',
       'no_results_title': 'No matching results found',
       'no_results_subtitle': 'Double-check spelling or try searching other keywords',
@@ -247,6 +255,16 @@ class AppTranslations {
       'maintenance_dept': 'Home Maintenance Department',
       'landscaping': 'External Landscaping',
       'facilities_care_dept': 'Facilities Care Department',
+
+      // Filter Sheet Keys
+      'filters': 'Filters',
+      'sort_by': 'Sort By',
+      'price_low_to_high': 'Price (Lowest to Highest)',
+      'highest_rated': 'Highest Rated',
+      'price_range': 'Price Range',
+      'all': 'All',
+      'apply_filters': 'Apply Filters',
+      'km': 'km',
     }
   };
 
