@@ -11,6 +11,8 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/services/presentation/screens/services_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/provider_profile/presentation/screens/technician_profile_screen.dart';
+
 
 final appRouter = GoRouter(
   initialLocation: '/home',
@@ -39,7 +41,12 @@ final appRouter = GoRouter(
       path: '/terms',
       builder: (context, state) => const TermsScreen(),
     ),
+    GoRoute(
+      path: '/technician-profile',
+      builder: (context, state) => const TechnicianProfileScreen(),
+    ),
     // ShellRoute for persistent bottom tab bar layout
+
     ShellRoute(
       builder: (context, state, child) => MainShellScreen(child: child),
       routes: [
