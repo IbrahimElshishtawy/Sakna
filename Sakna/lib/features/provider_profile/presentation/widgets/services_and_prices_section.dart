@@ -65,7 +65,7 @@ class ServicesAndPricesSection extends ConsumerWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.01),
+            color: Colors.black.withValues(alpha: 0.01),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -76,10 +76,10 @@ class ServicesAndPricesSection extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: colors.background.withOpacity(colors.isDark ? 0.4 : 0.6),
+              color: colors.background.withValues(alpha: colors.isDark ? 0.4 : 0.6),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: colors.border.withOpacity(0.5),
+                color: colors.border.withValues(alpha: 0.5),
                 width: 0.5,
               ),
             ),
