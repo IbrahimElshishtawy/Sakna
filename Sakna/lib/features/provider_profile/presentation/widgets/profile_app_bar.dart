@@ -14,10 +14,10 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardTheme.color?.withOpacity(0.8),
+            color: Theme.of(context).cardTheme.color?.withValues(alpha: 0.8),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Theme.of(context).dividerColor.withOpacity(0.08),
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.08),
               width: 1,
             ),
           ),
@@ -48,10 +48,10 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Theme.of(context).cardTheme.color?.withOpacity(0.8),
+              color: Theme.of(context).cardTheme.color?.withValues(alpha: 0.8),
               shape: BoxShape.circle,
               border: Border.all(
-                color: Theme.of(context).dividerColor.withOpacity(0.08),
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.08),
                 width: 1,
               ),
             ),
