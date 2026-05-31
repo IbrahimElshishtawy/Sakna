@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/entities/user_profile.dart';
 import '../providers/profile_providers.dart';
 import '../states/profile_state.dart';
 
