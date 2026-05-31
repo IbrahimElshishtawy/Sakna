@@ -19,6 +19,20 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+subprojects {
+    tasks.configureEach {
+        if (name.contains("Kotlin", ignoreCase = true)) {
+            try {
+                if (hasProperty("incremental")) {
+                    setProperty("incremental", false)
+                }
+            } catch (e: Exception) {
+                // Ignore any issues configuring tasks that aren't KotlinCompile
+            }
+        }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
