@@ -39,14 +39,4 @@ final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
 
 // --- Controller ---
 final profileControllerProvider =
-    StateNotifierProvider<ProfileController, ProfileState>((ref) {
-  final getProfile = ref.watch(getProfileUseCaseProvider);
-  final updateProfile = ref.watch(updateProfileUseCaseProvider);
-  final logout = ref.watch(logoutUseCaseProvider);
-
-  return ProfileController(
-    getProfileUseCase: getProfile,
-    updateProfileUseCase: updateProfile,
-    logoutUseCase: logout,
-  );
-});
+    NotifierProvider<ProfileController, ProfileState>(ProfileController.new);

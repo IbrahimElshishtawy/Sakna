@@ -23,7 +23,6 @@ class ProfileScreen extends ConsumerWidget {
     final profileController = ref.read(profileControllerProvider.notifier);
 
     // Signature brand colors
-    final brandNavy = const Color(0xFF031024);
     final brandGold = const Color(0xFFFFD700);
 
     return Scaffold(
@@ -244,7 +243,7 @@ class ProfileScreen extends ConsumerWidget {
                         themeColors: themeColors,
                         trailing: Switch.adaptive(
                           value: themeMode == ThemeMode.dark,
-                          activeColor: brandGold,
+                          activeThumbColor: brandGold,
                           activeTrackColor: brandGold.withValues(alpha: 0.3),
                           onChanged: (bool value) {
                             ref.read(themeModeProvider.notifier).toggleTheme();
