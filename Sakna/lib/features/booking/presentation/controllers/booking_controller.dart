@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/usecases/get_bookings_usecase.dart';
 import '../providers/booking_providers.dart';
 import '../states/booking_state.dart';
 
