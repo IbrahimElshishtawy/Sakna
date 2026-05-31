@@ -24,6 +24,10 @@ class AppTranslations {
       'profile': 'حسابي',
       'bookings': 'الحجوزات',
       'search': 'البحث',
+      'bookings_welcome': 'أهلاً بك في خدمة',
+      'no_active_bookings': 'لا يوجد حجوزات نشطة',
+      'no_bookings_desc': 'يبدو أنك لم تقم بحجز أي خدمات بعد. استكشف خدماتنا المميزة وابدأ رحلتك معنا اليوم.',
+      'explore_services': 'استكشف الخدمات',
       
       // Category translations
       'cat_maintenance': 'الصيانة',
@@ -157,6 +161,10 @@ class AppTranslations {
       'profile': 'Profile',
       'bookings': 'Bookings',
       'search': 'Search',
+      'bookings_welcome': 'Welcome to Khidma',
+      'no_active_bookings': 'No active bookings',
+      'no_bookings_desc': 'It seems you haven\'t booked any services yet. Explore our premium services and start your journey with us today.',
+      'explore_services': 'Explore Services',
       
       // Category translations
       'cat_maintenance': 'Maintenance',
