@@ -12,6 +12,7 @@ import '../../features/services/presentation/screens/services_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/provider_profile/presentation/screens/technician_profile_screen.dart';
 import '../../features/booking/presentation/screens/bookings_screen.dart';
+import '../../features/live_tracking/presentation/screens/live_tracking_screen.dart';
 
 
 final appRouter = GoRouter(
@@ -44,6 +45,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/technician-profile',
       builder: (context, state) => const TechnicianProfileScreen(),
+    ),
+    GoRoute(
+      path: '/tracking',
+      builder: (context, state) => const LiveTrackingScreen(),
     ),
     // ShellRoute for persistent bottom tab bar layout
 
