@@ -28,6 +28,16 @@ class AppTranslations {
       'no_active_bookings': 'لا يوجد حجوزات نشطة',
       'no_bookings_desc': 'يبدو أنك لم تقم بحجز أي خدمات بعد. استكشف خدماتنا المميزة وابدأ رحلتك معنا اليوم.',
       'explore_services': 'استكشف الخدمات',
+      'active_job': 'جاري العمل',
+      'elapsed_time': 'الوقت المنقضي',
+      'tasks': 'المهام',
+      'completed': 'مكتمل',
+      'in_progress': 'قيد التنفيذ',
+      'completed_out_of': 'مكتمل',
+      'live_updates': 'التحديثات المباشرة',
+      'emergency_support': 'الدعم الطارئ',
+      'add_photo': 'إضافة صورة',
+      'before_work': 'قبل بدء العمل',
       
       // Category translations
       'cat_maintenance': 'الصيانة',
@@ -165,6 +175,16 @@ class AppTranslations {
       'no_active_bookings': 'No active bookings',
       'no_bookings_desc': 'It seems you haven\'t booked any services yet. Explore our premium services and start your journey with us today.',
       'explore_services': 'Explore Services',
+      'active_job': 'In Progress',
+      'elapsed_time': 'Elapsed Time',
+      'tasks': 'Tasks',
+      'completed': 'Completed',
+      'in_progress': 'In Progress',
+      'completed_out_of': 'completed',
+      'live_updates': 'Live Updates',
+      'emergency_support': 'Emergency Support',
+      'add_photo': 'Add Photo',
+      'before_work': 'Before starting work',
       
       // Category translations
       'cat_maintenance': 'Maintenance',
