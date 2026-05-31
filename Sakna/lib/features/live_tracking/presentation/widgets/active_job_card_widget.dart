@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../config/theme/theme_provider.dart';
 import '../../../localization/presentation/providers/localization_providers.dart';
 import '../../domain/entities/job_tracking.dart';
 
@@ -14,7 +13,6 @@ class ActiveJobCardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeColors = ref.watch(themeColorsProvider);
     final t = ref.watch(translationProvider);
 
     // Format ticking elapsed seconds: HH:MM:SS

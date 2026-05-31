@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/usecases/get_live_tracking_usecase.dart';
 import '../providers/live_tracking_providers.dart';
 import '../states/live_tracking_state.dart';
 

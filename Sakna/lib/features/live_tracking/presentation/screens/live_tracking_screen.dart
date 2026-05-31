@@ -4,6 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import '../../../../config/theme/theme_provider.dart';
 import '../../../localization/presentation/providers/localization_providers.dart';
 import '../controllers/live_tracking_controller.dart';
+import '../../domain/entities/tracking_task.dart';
 import '../widgets/active_job_card_widget.dart';
 import '../widgets/task_list_item_widget.dart';
 import '../widgets/live_updates_widget.dart';
