@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../config/theme/theme_provider.dart';
 import '../../../localization/presentation/providers/localization_providers.dart';
+import '../providers/profile_providers.dart';
+import '../widgets/profile_avatar_section.dart';
+import '../widgets/profile_custom_app_bar.dart';
+import '../widgets/profile_menu_tile.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -13,626 +17,440 @@ class ProfileScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final t = ref.watch(translationProvider);
     final isAr = t.isArabic;
+    
+    // Watch Clean Architecture profile state
+    final profileState = ref.watch(profileControllerProvider);
+    final profileController = ref.read(profileControllerProvider.notifier);
 
     // Signature brand colors
     final brandNavy = const Color(0xFF031024);
     final brandGold = const Color(0xFFFFD700);
-    final lightGold = const Color(0xFFB8860B);
-    final activeGold = themeColors.isDark ? brandGold : lightGold;
 
     return Scaffold(
       backgroundColor: themeColors.background,
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(
-          left: 16.0,
-          right: 16.0,
-          top: 24.0,
-          bottom: 110.0, // bottom padded for floating navbar
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            
-            // 1. Premium Header Section with dynamic greeting
-            Text(
-              t.translate('profile'),
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: themeColors.textPrimary,
-                fontFamily: 'Cairo',
+      appBar: ProfileCustomAppBar(
+        title: t.translate('welcome_in_khidma'),
+        avatarUrl: profileState.userProfile?.avatarUrl ?? '',
+        themeColors: themeColors,
+        onNotificationTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                isAr ? 'لا توجد إشعارات جديدة حالياً' : 'No new notifications at this time',
+                style: const TextStyle(fontFamily: 'Cairo'),
               ),
+              backgroundColor: themeColors.surface,
+              behavior: SnackBarBehavior.floating,
             ),
-            const SizedBox(height: 20),
+          );
+        },
+        onAvatarTap: () {
+          if (profileState.userProfile != null) {
+            _showEditNameDialog(context, ref, profileState.userProfile!.name, themeColors, t);
+          }
+        },
+      ),
+      body: Builder(
+        builder: (context) {
+          if (profileState.isLoading && profileState.userProfile == null) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(brandGold),
+              ),
+            );
+          }
 
-            // 2. High-end Glassmorphic Profile Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  colors: themeColors.isDark
-                      ? [
-                          brandNavy.withValues(alpha: 0.85),
-                          const Color(0xFF051D3F).withValues(alpha: 0.85),
-                        ]
-                      : [
-                          Colors.white,
-                          Colors.white.withValues(alpha: 0.9),
-                        ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: themeColors.isDark ? 0.4 : 0.05),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-                border: Border.all(
-                  color: themeColors.isDark
-                      ? brandGold.withValues(alpha: 0.25)
-                      : themeColors.border,
-                  width: 1.5,
+          if (profileState.errorMessage != null && profileState.userProfile == null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+                    const SizedBox(height: 16),
+                    Text(
+                      profileState.errorMessage!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: themeColors.textPrimary, fontFamily: 'Cairo'),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => profileController.loadProfile(),
+                      style: ElevatedButton.styleFrom(backgroundColor: brandGold),
+                      child: Text(isAr ? 'إعادة المحاولة' : 'Retry', style: const TextStyle(color: Colors.black)),
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                children: [
-                  // Avatar with Golden Gradient Ring
-                  Container(
-                    padding: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [brandGold, const Color(0xFFB8860B), brandGold],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: brandGold.withValues(alpha: themeColors.isDark ? 0.35 : 0.15),
-                          blurRadius: 15,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: CircleAvatar(
-                      radius: 46,
-                      backgroundColor: brandNavy,
-                      child: Text(
-                        isAr ? 'أ م' : 'AM',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w900,
-                          color: brandGold,
-                          letterSpacing: isAr ? 1.0 : 2.0,
-                          fontFamily: 'Cairo',
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Username
-                  Text(
-                    t.translate('user_name'),
+            );
+          }
+
+          final user = profileState.userProfile!;
+
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: 16.0,
+              bottom: 110.0, // bottom padded for floating navbar
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. Premium Avatar Section
+                ProfileAvatarSection(
+                  name: user.name,
+                  avatarUrl: user.avatarUrl,
+                  userType: isAr ? 'عميل' : t.translate('customer_badge'),
+                  memberTier: isAr ? 'بريميوم' : t.translate('premium_badge'),
+                  themeColors: themeColors,
+                  onAvatarEditTap: () {
+                    _showEditNameDialog(context, ref, user.name, themeColors, t);
+                  },
+                ),
+                const SizedBox(height: 28),
+
+                // 2. Settings Group Title
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    isAr ? 'الإعدادات الشخصية' : 'Personal Settings',
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: themeColors.textPrimary,
                       fontFamily: 'Cairo',
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  
-                  // Membership Tier
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: activeGold.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(
-                        color: activeGold.withValues(alpha: 0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.workspace_premium_rounded,
-                          size: 15,
-                          color: activeGold,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          t.translate('member_tier'),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: activeGold,
-                            fontFamily: 'Cairo',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
+                ),
+                const SizedBox(height: 10),
 
-            // 3. Dynamic Balance Credit Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(22),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  colors: themeColors.isDark
-                      ? [
-                          const Color(0xFF0D2547),
-                          brandNavy,
-                        ]
-                      : [
-                          brandNavy,
-                          const Color(0xFF0A2242),
-                        ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                image: DecorationImage(
-                  image: const AssetImage('assets/images/card_pattern.png'),
-                  fit: BoxFit.cover,
-                  colorFilter: ColorFilter.mode(
-                    Colors.white.withValues(alpha: 0.04),
-                    BlendMode.dstATop,
-                  ),
-                  onError: (exception, stackTrace) {}, // Gracefully handle missing asset
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: brandNavy.withValues(alpha: 0.3),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-                border: Border.all(
-                  color: brandGold.withValues(alpha: 0.15),
-                  width: 1,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        t.translate('wallet_balance'),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.7),
-                          fontFamily: 'Cairo',
-                        ),
-                      ),
-                      Icon(
-                        Icons.account_balance_wallet_rounded,
-                        color: brandGold,
-                        size: 26,
+                // 3. First Settings Section Card (Personal Info, Addresses, Payments)
+                Container(
+                  decoration: BoxDecoration(
+                    color: themeColors.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: themeColors.border, width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: themeColors.isDark ? 0.2 : 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
+                  child: Column(
                     children: [
-                      Text(
-                        '250.00',
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          fontFamily: 'Cairo',
-                        ),
+                      // Personal Information Row
+                      ProfileMenuTile(
+                        icon: Icons.person_outline_rounded,
+                        title: t.translate('personal_info'),
+                        themeColors: themeColors,
+                        showDivider: true,
+                        onTap: () {
+                          _showEditNameDialog(context, ref, user.name, themeColors, t);
+                        },
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        t.translate('egp'),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: brandGold,
-                          fontFamily: 'Cairo',
-                        ),
+                      // Saved Addresses Row
+                      ProfileMenuTile(
+                        icon: Icons.map_outlined,
+                        title: t.translate('registered_addresses'),
+                        themeColors: themeColors,
+                        showDivider: true,
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                isAr ? 'العناوين المسجلة قيد التطوير' : 'Registered Addresses is under development',
+                                style: const TextStyle(fontFamily: 'Cairo'),
+                              ),
+                              backgroundColor: themeColors.surface,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
+                      ),
+                      // Payment Methods Row
+                      ProfileMenuTile(
+                        icon: Icons.credit_card_rounded,
+                        title: t.translate('payment_methods'),
+                        themeColors: themeColors,
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                isAr ? 'طرق الدفع قيد التطوير' : 'Payment Methods is under development',
+                                style: const TextStyle(fontFamily: 'Cairo'),
+                              ),
+                              backgroundColor: themeColors.surface,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
-                ],
+                ),
+                const SizedBox(height: 24),
+
+                // 4. System Settings Title
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    t.translate('settings'),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: themeColors.textPrimary,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // 5. Second Settings Section Card (Language, Dark Mode)
+                Container(
+                  decoration: BoxDecoration(
+                    color: themeColors.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: themeColors.border, width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: themeColors.isDark ? 0.2 : 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Language Row
+                      ProfileMenuTile(
+                        icon: Icons.language_rounded,
+                        title: t.translate('language'),
+                        subtitle: isAr ? 'العربية' : 'English',
+                        themeColors: themeColors,
+                        showDivider: true,
+                        onTap: () {
+                          _showLanguageBottomSheet(context, ref, themeColors, t);
+                        },
+                      ),
+                      // Dark Mode Row
+                      ProfileMenuTile(
+                        icon: Icons.dark_mode_outlined,
+                        title: t.translate('theme_dark'),
+                        themeColors: themeColors,
+                        trailing: Switch.adaptive(
+                          value: themeMode == ThemeMode.dark,
+                          activeColor: brandGold,
+                          activeTrackColor: brandGold.withValues(alpha: 0.3),
+                          onChanged: (bool value) {
+                            ref.read(themeModeProvider.notifier).toggleTheme();
+                          },
+                        ),
+                        onTap: () {
+                          ref.read(themeModeProvider.notifier).toggleTheme();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 6. Support & Help Card
+                Container(
+                  decoration: BoxDecoration(
+                    color: themeColors.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: themeColors.border, width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: themeColors.isDark ? 0.2 : 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Help & Support Row
+                      ProfileMenuTile(
+                        icon: Icons.headset_mic_outlined,
+                        title: t.translate('support'),
+                        themeColors: themeColors,
+                        showDivider: true,
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                isAr ? 'الدعم الفني والشكاوى متاح على مدار الساعة' : 'Help & Support is active 24/7',
+                                style: const TextStyle(fontFamily: 'Cairo'),
+                              ),
+                              backgroundColor: themeColors.surface,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
+                      ),
+                      // Log Out Row (Red Accent)
+                      ProfileMenuTile(
+                        icon: Icons.logout_rounded,
+                        title: t.translate('logout'),
+                        themeColors: themeColors,
+                        iconColor: Colors.redAccent,
+                        textColor: Colors.redAccent,
+                        trailing: const SizedBox.shrink(),
+                        onTap: () => _showLogoutDialog(context, ref, themeColors, t),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showEditNameDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String currentName,
+    dynamic themeColors,
+    dynamic t,
+  ) {
+    final controller = TextEditingController(text: currentName);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+          child: AlertDialog(
+            backgroundColor: themeColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(color: themeColors.border, width: 1),
+            ),
+            title: Text(
+              t.isArabic ? 'تعديل الاسم' : 'Edit Name',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: themeColors.textPrimary,
+                fontFamily: 'Cairo',
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 28),
+            content: TextField(
+              controller: controller,
+              style: TextStyle(color: themeColors.textPrimary, fontFamily: 'Cairo'),
+              decoration: InputDecoration(
+                hintText: t.isArabic ? 'أدخل الاسم الجديد' : 'Enter new name',
+                hintStyle: TextStyle(color: themeColors.textSecondary.withValues(alpha: 0.7)),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: themeColors.border)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: themeColors.accent)),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  t.isArabic ? 'إلغاء' : 'Cancel',
+                  style: TextStyle(color: themeColors.textSecondary, fontFamily: 'Cairo'),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final newName = controller.text.trim();
+                  if (newName.isNotEmpty) {
+                    ref.read(profileControllerProvider.notifier).updateProfileName(newName);
+                  }
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: themeColors.accent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(
+                  t.isArabic ? 'حفظ' : 'Save',
+                  style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-            // 4. Settings Section Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0),
-              child: Text(
-                t.translate('settings'),
+  void _showLanguageBottomSheet(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic themeColors,
+    dynamic t,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: themeColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: themeColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                t.translate('language'),
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: themeColors.textPrimary,
                   fontFamily: 'Cairo',
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-
-            // 5. Interactive Theme Switcher Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: themeColors.surface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: themeColors.border, width: 1),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.language_rounded, color: Colors.blueAccent),
+                title: const Text('العربية', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+                trailing: t.isArabic ? Icon(Icons.check_circle_rounded, color: themeColors.accent) : null,
+                onTap: () {
+                  ref.read(localeProvider.notifier).setLocale('ar');
+                  Navigator.pop(context);
+                },
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.palette_outlined,
-                        color: activeGold,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        t.translate('appearance'),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: themeColors.textPrimary,
-                          fontFamily: 'Cairo',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  
-                  // Day & Night Selector Pills
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: themeColors.background,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: themeColors.border, width: 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                        // Light Mode Pill
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              if (themeMode != ThemeMode.light) {
-                                ref.read(themeModeProvider.notifier).toggleTheme();
-                              }
-                            },
-                            borderRadius: BorderRadius.circular(10),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: themeMode == ThemeMode.light
-                                    ? (themeColors.isDark ? brandNavy : Colors.white)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: themeMode == ThemeMode.light
-                                    ? [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.05),
-                                          blurRadius: 4,
-                                        ),
-                                      ]
-                                    : null,
-                                border: themeMode == ThemeMode.light
-                                    ? Border.all(color: activeGold.withValues(alpha: 0.3), width: 1)
-                                    : null,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.light_mode_rounded,
-                                    size: 18,
-                                    color: themeMode == ThemeMode.light ? activeGold : themeColors.textSecondary,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    t.translate('theme_light'),
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: themeMode == ThemeMode.light
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                      color: themeMode == ThemeMode.light
-                                          ? themeColors.textPrimary
-                                          : themeColors.textSecondary,
-                                      fontFamily: 'Cairo',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        
-                        // Dark Mode Pill
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              if (themeMode != ThemeMode.dark) {
-                                ref.read(themeModeProvider.notifier).toggleTheme();
-                              }
-                            },
-                            borderRadius: BorderRadius.circular(10),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: themeMode == ThemeMode.dark
-                                    ? (themeColors.isDark ? brandNavy : Colors.white)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: themeMode == ThemeMode.dark
-                                    ? [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.15),
-                                          blurRadius: 4,
-                                        ),
-                                      ]
-                                    : null,
-                                border: themeMode == ThemeMode.dark
-                                    ? Border.all(color: activeGold.withValues(alpha: 0.3), width: 1)
-                                    : null,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.dark_mode_rounded,
-                                    size: 18,
-                                    color: themeMode == ThemeMode.dark ? activeGold : themeColors.textSecondary,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    t.translate('theme_dark'),
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: themeMode == ThemeMode.dark
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                      color: themeMode == ThemeMode.dark
-                                          ? themeColors.textPrimary
-                                          : themeColors.textSecondary,
-                                      fontFamily: 'Cairo',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              Divider(color: themeColors.border, height: 1),
+              ListTile(
+                leading: const Icon(Icons.language_rounded, color: Colors.orangeAccent),
+                title: const Text('English', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+                trailing: !t.isArabic ? Icon(Icons.check_circle_rounded, color: themeColors.accent) : null,
+                onTap: () {
+                  ref.read(localeProvider.notifier).setLocale('en');
+                  Navigator.pop(context);
+                },
               ),
-            ),
-            const SizedBox(height: 16),
-
-            // 6. Interactive Language Selector Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: themeColors.surface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: themeColors.border, width: 1),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.translate_rounded,
-                        color: activeGold,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        t.translate('language'),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: themeColors.textPrimary,
-                          fontFamily: 'Cairo',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Language Pills
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: themeColors.background,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: themeColors.border, width: 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                        // Arabic Pill
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => ref.read(localeProvider.notifier).setLocale('ar'),
-                            borderRadius: BorderRadius.circular(10),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: isAr
-                                    ? (themeColors.isDark ? brandNavy : Colors.white)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                                border: isAr
-                                    ? Border.all(color: activeGold.withValues(alpha: 0.3), width: 1)
-                                    : null,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'العربية',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: isAr ? FontWeight.bold : FontWeight.normal,
-                                    color: isAr ? themeColors.textPrimary : themeColors.textSecondary,
-                                    fontFamily: 'Cairo',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        
-                        // English Pill
-                        Expanded(
-                          child: InkWell(
-                            onTap: () => ref.read(localeProvider.notifier).setLocale('en'),
-                            borderRadius: BorderRadius.circular(10),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: !isAr
-                                    ? (themeColors.isDark ? brandNavy : Colors.white)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                                border: !isAr
-                                    ? Border.all(color: activeGold.withValues(alpha: 0.3), width: 1)
-                                    : null,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'English',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: !isAr ? FontWeight.bold : FontWeight.normal,
-                                    color: !isAr ? themeColors.textPrimary : themeColors.textSecondary,
-                                    fontFamily: 'Cairo',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // 7. General Utility Actions
-            Container(
-              decoration: BoxDecoration(
-                color: themeColors.surface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: themeColors.border, width: 1),
-              ),
-              child: Column(
-                children: [
-                  // Saved Addresses
-                  _buildMenuTile(
-                    icon: Icons.map_outlined,
-                    title: t.translate('saved_addresses'),
-                    themeColors: themeColors,
-                    onTap: () {},
-                  ),
-                  Divider(color: themeColors.border, height: 1, thickness: 1),
-                  
-                  // Help & Support
-                  _buildMenuTile(
-                    icon: Icons.headset_mic_outlined,
-                    title: t.translate('support'),
-                    themeColors: themeColors,
-                    onTap: () {},
-                  ),
-                  Divider(color: themeColors.border, height: 1, thickness: 1),
-                  
-                  // Log Out (Red Accent)
-                  _buildMenuTile(
-                    icon: Icons.logout_rounded,
-                    title: t.translate('logout'),
-                    themeColors: themeColors,
-                    iconColor: Colors.redAccent,
-                    textColor: Colors.redAccent,
-                    showTrailing: false,
-                    onTap: () => _showLogoutDialog(context, themeColors, t),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildMenuTile({
-    required IconData icon,
-    required String title,
-    required dynamic themeColors,
-    required VoidCallback onTap,
-    Color? iconColor,
-    Color? textColor,
-    bool showTrailing = true,
-  }) {
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      leading: Icon(
-        icon,
-        color: iconColor ?? (themeColors.isDark ? const Color(0xFFFFD700) : const Color(0xFFB8860B)),
-        size: 22,
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: textColor ?? themeColors.textPrimary,
-          fontFamily: 'Cairo',
-        ),
-      ),
-      trailing: showTrailing
-          ? Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: themeColors.textSecondary,
-            )
-          : null,
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context, dynamic themeColors, dynamic t) {
+  void _showLogoutDialog(BuildContext context, WidgetRef ref, dynamic themeColors, dynamic t) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -680,7 +498,10 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  ref.read(profileControllerProvider.notifier).logout();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,

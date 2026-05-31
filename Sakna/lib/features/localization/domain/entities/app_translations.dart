@@ -119,6 +119,12 @@ class AppTranslations {
       'appearance': 'المظهر والوضع',
       'language': 'لغة التطبيق',
       'egp': 'ج.م',
+      'welcome_in_khidma': 'أهلاً بك في خدمة',
+      'personal_info': 'المعلومات الشخصية',
+      'registered_addresses': 'العناوين المسجلة',
+      'payment_methods': 'طرق الدفع',
+      'customer_badge': 'عميل',
+      'premium_badge': 'بريميوم',
 
       // Search Screen Keys
       'recent_search': 'البحث الأخير',
@@ -266,6 +272,12 @@ class AppTranslations {
       'appearance': 'Appearance & Theme',
       'language': 'App Language',
       'egp': 'EGP',
+      'welcome_in_khidma': 'Welcome to Khidma',
+      'personal_info': 'Personal Information',
+      'registered_addresses': 'Registered Addresses',
+      'payment_methods': 'Payment Methods',
+      'customer_badge': 'Client',
+      'premium_badge': 'Premium',
 
       // Search Screen Keys
       'recent_search': 'Recent Searches',
