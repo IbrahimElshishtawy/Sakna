@@ -12,6 +12,7 @@ import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/services/presentation/screens/services_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/provider_profile/presentation/screens/technician_profile_screen.dart';
+import '../../features/booking/presentation/screens/bookings_screen.dart';
 
 
 final appRouter = GoRouter(
@@ -56,7 +57,7 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: '/bookings',
-          builder: (context, state) => const _PlaceholderScreen(title: 'الحجوزات'),
+          builder: (context, state) => const BookingsScreen(),
         ),
         GoRoute(
           path: '/search',
