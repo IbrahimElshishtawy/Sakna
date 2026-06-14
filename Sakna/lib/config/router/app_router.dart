@@ -13,6 +13,11 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/provider_profile/presentation/screens/technician_profile_screen.dart';
 import '../../features/booking/presentation/screens/bookings_screen.dart';
 import '../../features/live_tracking/presentation/screens/live_tracking_screen.dart';
+import '../../features/scheduling/presentation/screens/booking_setup_screen.dart';
+import '../../features/booking/presentation/screens/add_order_details_screen.dart';
+import '../../features/address_management/presentation/screens/select_address_screen.dart';
+import '../../features/booking/presentation/screens/booking_summary_screen.dart';
+import '../../features/payments/presentation/screens/payment_methods_screen.dart';
 
 
 final appRouter = GoRouter(
@@ -49,6 +54,26 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/tracking',
       builder: (context, state) => const LiveTrackingScreen(),
+    ),
+    GoRoute(
+      path: '/booking-setup',
+      builder: (context, state) => const BookingSetupScreen(),
+    ),
+    GoRoute(
+      path: '/add-order-details',
+      builder: (context, state) => const AddOrderDetailsScreen(),
+    ),
+    GoRoute(
+      path: '/select-address',
+      builder: (context, state) => const SelectAddressScreen(),
+    ),
+    GoRoute(
+      path: '/booking-summary',
+      builder: (context, state) => const BookingSummaryScreen(),
+    ),
+    GoRoute(
+      path: '/payment-methods',
+      builder: (context, state) => const PaymentMethodsScreen(),
     ),
     // ShellRoute for persistent bottom tab bar layout
 

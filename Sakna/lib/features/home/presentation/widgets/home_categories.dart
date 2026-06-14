@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../config/theme/theme_provider.dart';
 import '../../../localization/presentation/providers/localization_providers.dart';
 
@@ -72,8 +73,10 @@ class HomeCategories extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: categories.map((cat) {
             return Expanded(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: GestureDetector(
+                onTap: () => context.push('/booking-setup'),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 6.0),
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 decoration: BoxDecoration(
                   color: themeColors.surface,
@@ -114,8 +117,9 @@ class HomeCategories extends ConsumerWidget {
                   ],
                 ),
               ),
-            );
-          }).toList(),
+            )
+          );
+        }).toList(),
         ),
       ],
     );

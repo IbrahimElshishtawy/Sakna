@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import 'theme_state.dart';
+export 'theme_state.dart';
 
 class ThemeModeNotifier extends Notifier<ThemeMode> {
   static const _key = 'theme_mode';
