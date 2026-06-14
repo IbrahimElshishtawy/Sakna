@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/booking_details.dart';
+export '../../domain/entities/booking_details.dart';
 
 class BookingFlowNotifier extends Notifier<BookingDetails> {
   @override

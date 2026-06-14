@@ -288,7 +288,7 @@ class _BookingSetupScreenState extends ConsumerState<BookingSetupScreen> {
                           ),
                           Switch(
                             value: bookingDetails.isRecurring,
-                            activeColor: themeColors.accent,
+                            activeThumbColor: themeColors.accent,
                             activeTrackColor: themeColors.primary,
                             inactiveThumbColor: Colors.grey,
                             inactiveTrackColor: themeColors.border,

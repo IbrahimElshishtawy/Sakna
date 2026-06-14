@@ -79,7 +79,7 @@ class _PaymentMethodsScreenState extends ConsumerState<PaymentMethodsScreen> {
             backgroundColor: colors.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: colors.border),
+              side: BorderSide(color: colors.border),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khidma/config/theme/theme_provider.dart';
-import 'package:khidma/config/theme/theme_state.dart';
 
 class ReviewsSection extends ConsumerWidget {
   const ReviewsSection({super.key});

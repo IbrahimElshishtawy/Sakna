@@ -306,7 +306,7 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                           ),
                           Switch(
                             value: bookingDetails.useLoyaltyPoints,
-                            activeColor: themeColors.accent,
+                            activeThumbColor: themeColors.accent,
                             activeTrackColor: themeColors.primary,
                             inactiveThumbColor: Colors.grey,
                             inactiveTrackColor: themeColors.border,
